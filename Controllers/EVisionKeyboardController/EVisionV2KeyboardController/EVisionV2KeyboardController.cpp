@@ -48,6 +48,21 @@ static uint8_t endorfy_map[EVISION_V2_MATRIX_WIDTH * EVISION_V2_MATRIX_HEIGHT] =
     105, 106, 107,                111,                115, 116, 117, 118, 119, 120, 121, 123,      124,
 };
 
+/*---------------------------------------------------------*\
+| Redragon K552 Kumara (320F:5000), TKL, 87 keys            |
+|   Values are the firmware LED indices (taken from the     |
+|   SignalRGB plugin), listed in matrix (row-major) order   |
+\*---------------------------------------------------------*/
+static uint8_t k552_map[87] =
+{
+      0,   8,  16,  24,  32,  40,  48,  56,  64,  72,  80,  88,  96, 104, 112, 120,
+      1,   9,  17,  25,  33,  41,  49,  57,  65,  73,  81,  89,  97, 105, 113, 121, 115,
+      2,  10,  18,  26,  34,  42,  50,  58,  66,  74,  82,  98,  99,  12, 114, 122, 123,
+      3,  11,  19,  27,  35,  43,  51,  59,  67,  75,  92,  91, 107,
+      4,  20,  28,  36,  44,  52,  60,  68,  76,  84, 100, 108, 116,
+      5,  13,  21,  45,  77,  85,  93, 101, 109, 117, 125,
+};
+
 EVisionV2KeyboardController::EVisionV2KeyboardController(hid_device* dev_handle, const char* path, EVisionV2KeyboardLayout dev_layout, std::string dev_name)
 {
     dev                 = dev_handle;
@@ -56,10 +71,41 @@ EVisionV2KeyboardController::EVisionV2KeyboardController(hid_device* dev_handle,
     layout              = dev_layout;
 
     /*---------------------------------------------------------*\
+    | Safe defaults in case the capability read below fails     |
+    \*---------------------------------------------------------*/
+    map_size            = 0;
+    macros_size         = 0;
+    led_count           = 0;
+    keyvalue_map        = evisionv2_map;
+
+    switch(layout)
+    {
+        case EVISION_V2_KEYBOARD_LAYOUT:
+            keyvalue_map = evisionv2_map;
+            led_count    = 106;
+            break;
+
+        case ENDORFY_KEYBOARD_LAYOUT:
+            keyvalue_map = endorfy_map;
+            led_count    = 104;
+            break;
+
+        case REDRAGON_K552_KEYBOARD_LAYOUT:
+            keyvalue_map = k552_map;
+            led_count    = 87;
+            map_size     = 128;
+            break;
+    }
+
+    /*---------------------------------------------------------*\
     | Get capabilities and layout                               |
     \*---------------------------------------------------------*/
     uint8_t buffer[7];
-    if(Read(EVISION_V2_CMD_READ_CAPABILITIES, 0, sizeof(buffer), buffer) < 0)
+    memset(buffer, 0, sizeof(buffer));
+    int cap_ret = Read(EVISION_V2_CMD_READ_CAPABILITIES, 0, sizeof(buffer), buffer);
+    LOG_INFO("[EVision V2] %s capabilities read ret=%d data=%02X %02X %02X %02X %02X %02X %02X",
+             name.c_str(), cap_ret, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6]);
+    if(cap_ret < 0)
     {
         return;
     }
@@ -81,6 +127,11 @@ EVisionV2KeyboardController::EVisionV2KeyboardController(hid_device* dev_handle,
         case ENDORFY_KEYBOARD_LAYOUT:
             keyvalue_map = endorfy_map;
             led_count = 104;
+            break;
+
+        case REDRAGON_K552_KEYBOARD_LAYOUT:
+            keyvalue_map = k552_map;
+            led_count = 87;
             break;
     }
 }
@@ -143,10 +194,23 @@ int EVisionV2KeyboardController::Query(uint8_t cmd, uint16_t offset, const uint8
 
         hid_write(dev, buffer, sizeof(buffer));
 
+        /*-----------------------------------------------------*\
+        | The K552 is driven like the SignalRGB plugin does:    |
+        | color streaming packets are write-only, no reply wait |
+        \*-----------------------------------------------------*/
+        if(layout == REDRAGON_K552_KEYBOARD_LAYOUT && cmd == EVISION_V2_CMD_SEND_DYNAMIC_COLORS)
+        {
+            return size;
+        }
+
         do
         {
-            bytes_read = hid_read(dev, buffer, sizeof(buffer));
+            bytes_read = hid_read_timeout(dev, buffer, sizeof(buffer), 500);
         } while(bytes_read != 0 && buffer[0] != EVISION_V2_REPORT_ID);
+    }
+    if(bytes_read != sizeof(buffer))
+    {
+        LOG_INFO("[EVision V2] cmd 0x%02X offset 0x%04X: no/short reply (%d bytes)", cmd, offset, bytes_read);
     }
     query_check_buffer(bytes_read == sizeof(buffer));
 
@@ -159,6 +223,7 @@ int EVisionV2KeyboardController::Query(uint8_t cmd, uint16_t offset, const uint8
 
     if(buffer[7] != 0)
     {
+        LOG_INFO("[EVision V2] cmd 0x%02X offset 0x%04X: device returned error 0x%02X", cmd, offset, buffer[7]);
         return -buffer[7];
     }
 
@@ -370,6 +435,11 @@ void EVisionV2KeyboardController::SetMode(EVisionV2KeyboardPart part, const Evis
 
 void EVisionV2KeyboardController::SetLedsDirect(const std::vector<RGBColor>& colours)
 {
+    if(map_size == 0 || keyvalue_map == nullptr)
+    {
+        return;
+    }
+
     const size_t colours_num = std::min(colours.size(), led_count);
 
     uint8_t* buffer = new uint8_t[3 * map_size];
@@ -378,6 +448,10 @@ void EVisionV2KeyboardController::SetLedsDirect(const std::vector<RGBColor>& col
     for(size_t i = 0; i < colours_num; i++)
     {
         size_t j = (size_t)keyvalue_map[i] * 3;
+        if(j + 2 >= 3 * map_size)
+        {
+            continue;
+        }
         buffer[j + 0] = RGBGetRValue(colours[i]);
         buffer[j + 1] = RGBGetGValue(colours[i]);
         buffer[j + 2] = RGBGetBValue(colours[i]);

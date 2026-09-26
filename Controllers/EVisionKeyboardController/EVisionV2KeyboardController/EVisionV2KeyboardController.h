@@ -133,6 +133,7 @@ enum EVisionV2KeyboardLayout
 {
     EVISION_V2_KEYBOARD_LAYOUT,
     ENDORFY_KEYBOARD_LAYOUT,
+    REDRAGON_K552_KEYBOARD_LAYOUT,
 };
 
 enum EVisionV2KeyboardPart

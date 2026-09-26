@@ -7,6 +7,7 @@
 |   SPDX-License-Identifier: GPL-2.0-or-later               |
 \*---------------------------------------------------------*/
 
+#include <cwchar>
 #include <hidapi.h>
 #include "DetectionManager.h"
 #include "EVisionKeyboardController.h"
@@ -50,6 +51,15 @@ DetectedControllers DetectEVisionKeyboards(hid_device_info* info, const std::str
     DetectedControllers detected_controllers;
     hid_device*         dev;
 
+    /*-----------------------------------------------------*\
+    | The Redragon K552 (320F:5000) uses the V2 protocol    |
+    | and is handled by the EVision V2 detector             |
+    \*-----------------------------------------------------*/
+    if(info->vendor_id == EVISION_VID && info->product_id == EVISION_5000_PID)
+    {
+        return(detected_controllers);
+    }
+
     dev = hid_open_path(info->path);
 
     if(dev)
@@ -73,7 +83,7 @@ REGISTER_HID_DETECTOR_IP("EVision Keyboard 0C45:652F",  DetectEVisionKeyboards, 
 REGISTER_HID_DETECTOR_IP("EVision Keyboard 0C45:7672",  DetectEVisionKeyboards, SONIX_VID,      EVISION_SONIX_7672_PID, 1, EVISION_KEYBOARD_USAGE_PAGE);
 REGISTER_HID_DETECTOR_IP("EVision Keyboard 0C45:7698",  DetectEVisionKeyboards, SONIX_VID,      EVISION_SONIX_7698_PID, 1, EVISION_KEYBOARD_USAGE_PAGE);
 REGISTER_HID_DETECTOR_IP("EVision Keyboard 0C45:8520",  DetectEVisionKeyboards, SONIX_VID,      EVISION_SONIX_8520_PID, 1, EVISION_KEYBOARD_USAGE_PAGE);
-REGISTER_HID_DETECTOR_IP("EVision Keyboard 320F:5000",  DetectEVisionKeyboards, EVISION_VID,    EVISION_5000_PID,       1, EVISION_KEYBOARD_USAGE_PAGE);
+REGISTER_HID_DETECTOR_IP("KURAMA 320F:5000",            DetectEVisionKeyboards, EVISION_VID,    EVISION_5000_PID,       1, EVISION_KEYBOARD_USAGE_PAGE);
 REGISTER_HID_DETECTOR_IP("EVision Keyboard 320F:502A",  DetectEVisionKeyboards, EVISION_VID,    EVISION_502A_PID,       1, EVISION_KEYBOARD_USAGE_PAGE);
 REGISTER_HID_DETECTOR_IP("EVision Keyboard 320F:505B",  DetectEVisionKeyboards, EVISION_VID,    EVISION_505B_PID,       1, EVISION_KEYBOARD_USAGE_PAGE);
 REGISTER_HID_DETECTOR_IP("EVision Keyboard 320F:5078",  DetectEVisionKeyboards, EVISION_VID,    EVISION_5078_PID,       1, EVISION_KEYBOARD_USAGE_PAGE);
