@@ -93,6 +93,7 @@ NetworkClientInfo::NetworkClientInfo()
     client_string           = "Client";
     client_ip               = OPENRGB_SDK_HOST;
     client_sock             = INVALID_SOCKET;
+    client_flags            = 0;
     client_listen_thread    = nullptr;
     client_protocol_version = 0;
     client_is_local         = false;
@@ -356,7 +357,9 @@ void NetworkServer::SignalLogManagerLoggedEntry(LogMessage& logged_entry)
         \*-------------------------------------------------*/
         for(unsigned int client_idx = 0; client_idx < ServerClients.size(); client_idx++)
         {
-            if(ServerClients[client_idx]->client_is_local_client)
+            if(ServerClients[client_idx]->client_is_local_client
+            && (ServerClients[client_idx]->client_protocol_version >= 6)
+            && (ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_LOGMANAGER))
             {
                 SendRequest_LoggedEntry(ServerClients[client_idx], data_size, data_buf);
             }
@@ -847,7 +850,7 @@ void NetworkServer::SignalActiveProfileChanged()
         \*-------------------------------------------------*/
         for(unsigned int client_idx = 0; client_idx < ServerClients.size(); client_idx++)
         {
-            if(ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER)
+            if((ServerClients[client_idx]->client_protocol_version >= 6) && (ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER))
             {
                 SendRequest_ProfileManager_ActiveProfileChanged(ServerClients[client_idx], active_profile);
             }
@@ -930,7 +933,10 @@ void NetworkServer::SignalProfileListUpdated()
         \*-------------------------------------------------*/
         for(unsigned int client_idx = 0; client_idx < ServerClients.size(); client_idx++)
         {
-            SendRequest_ProfileManager_ProfileListChanged(ServerClients[client_idx], profile_list_description);
+            if((ServerClients[client_idx]->client_protocol_version >= 6) && (ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER))
+            {
+                SendRequest_ProfileManager_ProfileListChanged(ServerClients[client_idx], profile_list_description);
+            }
         }
 
         delete[] profile_list_description;
@@ -1102,24 +1108,49 @@ void NetworkServer::ControllerListenThread(NetworkServerControllerThread* this_t
 
                 switch(queue_entry.header.pkt_id)
                 {
+                    case NET_PACKET_ID_REQUEST_CONTROLLER_DATA:
+                        {
+                            /*---------------------------------*\
+                            | Protocol versions < 6 sent the    |
+                            | client protocol version with this |
+                            | request, versions 6+ use the      |
+                            | stored negotiated protocol        |
+                            | version instead.                  |
+                            \*---------------------------------*/
+                            unsigned int protocol_version = queue_entry.client_info->client_protocol_version;
+
+                            if(queue_entry.client_info->client_protocol_version < 6)
+                            {
+                                protocol_version = 0;
+
+                                if(queue_entry.header.pkt_size == sizeof(unsigned int))
+                                {
+                                    memcpy(&protocol_version, queue_entry.data, sizeof(unsigned int));
+                                }
+                            }
+
+                            SendReply_ControllerData(queue_entry.client_info, queue_entry.header.pkt_dev_id, protocol_version);
+                        }
+                        break;
+
                     case NET_PACKET_ID_RGBCONTROLLER_UPDATELEDS:
-                        status = ProcessRequest_RGBController_UpdateLEDs(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, this_thread->id);
+                        status = ProcessRequest_RGBController_UpdateLEDs(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, queue_entry.header.pkt_dev_id);
                         break;
 
                     case NET_PACKET_ID_RGBCONTROLLER_UPDATEZONELEDS:
-                        status = ProcessRequest_RGBController_UpdateZoneLEDs(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, this_thread->id);
+                        status = ProcessRequest_RGBController_UpdateZoneLEDs(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, queue_entry.header.pkt_dev_id);
                         break;
 
                     case NET_PACKET_ID_RGBCONTROLLER_UPDATEMODE:
-                        status = ProcessRequest_RGBController_UpdateSaveMode(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, this_thread->id, false);
+                        status = ProcessRequest_RGBController_UpdateSaveMode(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, queue_entry.header.pkt_dev_id, false);
                         break;
 
                     case NET_PACKET_ID_RGBCONTROLLER_SAVEMODE:
-                        status = ProcessRequest_RGBController_UpdateSaveMode(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, this_thread->id, true);
+                        status = ProcessRequest_RGBController_UpdateSaveMode(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, queue_entry.header.pkt_dev_id, true);
                         break;
 
                     case NET_PACKET_ID_RGBCONTROLLER_UPDATEZONEMODE:
-                        status = ProcessRequest_RGBController_UpdateZoneMode(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, this_thread->id);
+                        status = ProcessRequest_RGBController_UpdateZoneMode(queue_entry.client_info, queue_entry.header.pkt_size, queue_entry.data, queue_entry.header.pkt_dev_id);
                         break;
 
                     default:
@@ -1307,32 +1338,6 @@ void NetworkServer::ListenThreadFunction(NetworkClientInfo* client_info)
                 SendReply_ControllerCount(client_info);
                 break;
 
-            case NET_PACKET_ID_REQUEST_CONTROLLER_DATA:
-                {
-                    /*-------------------------------------*\
-                    | Protocol versions < 6 sent the client |
-                    | protocol version with this request,   |
-                    | versions 6+ use the stored negotiated |
-                    | protocol version instead.             |
-                    \*-------------------------------------*/
-                    if(client_info->client_protocol_version < 6)
-                    {
-                        unsigned int protocol_version = 0;
-
-                        if(header.pkt_size == sizeof(unsigned int))
-                        {
-                            memcpy(&protocol_version, data, sizeof(unsigned int));
-                        }
-
-                        SendReply_ControllerData(client_info, header.pkt_dev_id, protocol_version);
-                    }
-                    else
-                    {
-                        SendReply_ControllerData(client_info, header.pkt_dev_id, client_info->client_protocol_version);
-                    }
-                }
-                break;
-
             case NET_PACKET_ID_REQUEST_PROTOCOL_VERSION:
                 status = ProcessRequest_ClientProtocolVersion(client_info, header.pkt_size, data);
                 SendReply_ProtocolVersion(client_info);
@@ -1485,6 +1490,7 @@ void NetworkServer::ListenThreadFunction(NetworkClientInfo* client_info)
             case NET_PACKET_ID_RGBCONTROLLER_UPDATEMODE:
             case NET_PACKET_ID_RGBCONTROLLER_SAVEMODE:
             case NET_PACKET_ID_RGBCONTROLLER_UPDATEZONEMODE:
+            case NET_PACKET_ID_REQUEST_CONTROLLER_DATA:
                 {
                     /*-------------------------------------*\
                     | Find the controller thread matching   |
@@ -3514,7 +3520,7 @@ NetPacketStatus NetworkServer::ProcessRequest_RGBController_UpdateZoneMode(Netwo
         /*-------------------------------------------------*\
         | Unlock access mutex                               |
         \*-------------------------------------------------*/
-        controllers[controller_idx]->AccessMutex.unlock_shared();
+        controllers[controller_idx]->AccessMutex.unlock();
         return(NET_PACKET_STATUS_ERROR_INVALID_DATA);
     }
 
@@ -3921,6 +3927,14 @@ void NetworkServer::SendReply_PluginSpecific(NetworkClientInfo* client_info, uns
 
 void NetworkServer::SendRequest_LoggedEntry(NetworkClientInfo* client_info, unsigned int data_size, unsigned char* data_ptr)
 {
+    /*-----------------------------------------------------*\
+    | Only send to SDK v6 clients that support LogManager   |
+    \*-----------------------------------------------------*/
+    if((client_info->client_protocol_version < 6) || !(client_info->client_flags & NET_CLIENT_FLAG_SUPPORTS_LOGMANAGER))
+    {
+        return;
+    }
+
     NetPacketHeader pkt_hdr;
 
     if(data_ptr != NULL)
@@ -3936,6 +3950,14 @@ void NetworkServer::SendRequest_LoggedEntry(NetworkClientInfo* client_info, unsi
 
 void NetworkServer::SendRequest_ProfileManager_ActiveProfileChanged(NetworkClientInfo* client_info, std::string active_profile)
 {
+    /*-----------------------------------------------------*\
+    | Only send to SDK v6 clients supporting ProfileManager |
+    \*-----------------------------------------------------*/
+    if((client_info->client_protocol_version < 6) || !(client_info->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER))
+    {
+        return;
+    }
+
     NetPacketHeader pkt_hdr;
 
     InitNetPacketHeader(&pkt_hdr, 0, NET_PACKET_ID_PROFILEMANAGER_ACTIVE_PROFILE_CHANGED, (unsigned int)strlen(active_profile.c_str()) + 1);
@@ -4078,7 +4100,7 @@ void NetworkServer::SendRequest_ProfileManager_ActiveProfileChanged(std::string 
 
     for(std::size_t client_idx = 0; client_idx < ServerClients.size(); client_idx++)
     {
-        if(ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER)
+        if((ServerClients[client_idx]->client_protocol_version >= 6) && (ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER))
         {
             SOCKET client_sock = ServerClients[client_idx]->client_sock;
 
@@ -4101,7 +4123,7 @@ void NetworkServer::SendRequest_ProfileManager_ProfileAboutToLoad()
 
     for(std::size_t client_idx = 0; client_idx < ServerClients.size(); client_idx++)
     {
-        if(ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER)
+        if((ServerClients[client_idx]->client_protocol_version >= 6) && (ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER))
         {
             profile_about_to_load_count++;
 
@@ -4116,6 +4138,14 @@ void NetworkServer::SendRequest_ProfileManager_ProfileAboutToLoad()
 
 void NetworkServer::SendRequest_ProfileManager_ProfileListChanged(NetworkClientInfo* client_info, unsigned char* profile_list_description)
 {
+    /*-----------------------------------------------------*\
+    | Only send to SDK v6 clients supporting ProfileManager |
+    \*-----------------------------------------------------*/
+    if((client_info->client_protocol_version < 6) || !(client_info->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER))
+    {
+        return;
+    }
+
     NetPacketHeader pkt_hdr;
     unsigned int    pkt_size;
 
@@ -4137,7 +4167,7 @@ void NetworkServer::SendRequest_ProfileManager_ProfileLoaded(std::string profile
 
     for(std::size_t client_idx = 0; client_idx < ServerClients.size(); client_idx++)
     {
-        if((ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER) && (ServerClients[client_idx]->client_is_local_client))
+        if((ServerClients[client_idx]->client_protocol_version >= 6) && (ServerClients[client_idx]->client_flags & NET_CLIENT_FLAG_SUPPORTS_PROFILEMANAGER) && (ServerClients[client_idx]->client_is_local_client))
         {
             SOCKET client_sock = ServerClients[client_idx]->client_sock;
 
@@ -4185,7 +4215,7 @@ void NetworkServer::SendRequest_RGBController_SignalUpdate(RGBController * contr
         {
             NetworkClientInfo* client_info = ServerClients[client_idx];
 
-            if(client_info->client_protocol_version >= 6)
+            if((client_info->client_protocol_version >= 6) && (client_info->client_flags & NET_CLIENT_FLAG_SUPPORTS_RGBCONTROLLER))
             {
                 unsigned int    protocol_version    = client_info->client_protocol_version;
                 NetPacketHeader reply_hdr;

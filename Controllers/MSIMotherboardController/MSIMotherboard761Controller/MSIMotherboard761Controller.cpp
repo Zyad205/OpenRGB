@@ -45,6 +45,15 @@ static const std::vector<MSI_ZONE> zone_set1 =
         MSI_ZONE_JARGB_3,
 };
 
+static const std::vector<MSI_ZONE> zone_set2 =
+{
+    MSI_ZONE_JAF,
+    MSI_ZONE_JARGB_1,
+    MSI_ZONE_JARGB_2,
+    MSI_ZONE_JARGB_3,
+    MSI_ZONE_J_PIPE_1,
+};
+
 static const std::string board_names[] =
 {
     "MSI MAG X870 TOMAHAWK WIFI (MS-7E51)",
@@ -55,6 +64,7 @@ static const std::string board_names[] =
     "MSI B850M GAMING PLUS WIFI6E (MS-7E81)",
     "MSI MPG X870E CARBON WIFI (MS-7E49)",
     "MSI Z890 GAMING PLUS WIFI (MS-7E34)",
+    "MSI Z890 GAMING PLUS WIFI6E (MS-7E34)",
     "MSI X870E GAMING PLUS WIFI (MS-7E70)",
     "MSI MAG X870E TOMAHAWK WIFI (MS-7E59)",
     "MSI PRO B850-P WIFI (MS-7E56)",
@@ -80,7 +90,10 @@ static const std::string board_names[] =
     "MSI B850MPOWER (MS-7E83)",
     "MSI B840M GAMING WIFI6E (MS-7E76)",
     "MSI PRO B850M-A WIFI (MS-7E66)",
-    "MSI PRO B850-S WIFI6E (MS-7E80)"
+    "MSI PRO B850-S WIFI6E (MS-7E80)",
+    "MSI B850M GAMING WIFI (MS-7E82)",
+    "MSI PRO B850-S EVO WIFI (MS-7E97)",
+    "MSI B850M GAMING WIFI6E (MS-7E87)"
 };
 
 static const mystic_light_761_config board_configs[] =
@@ -93,32 +106,36 @@ static const mystic_light_761_config board_configs[] =
     { &(board_names[5]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI B850M GAMING PLUS WIFI6E
     { &(board_names[6]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI MPG X870E CARBON WIFI
     { &(board_names[7]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI Z890 GAMING PLUS WIFI
-    { &(board_names[8]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI X870E GAMING PLUS WIFI
-    { &(board_names[9]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI MAG X870E TOMAHAWK WIFI
-    { &(board_names[10]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850-P WIFI (MS-7E56)
-    { &(board_names[11]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850M GAMING PLUS WIFI
-    { &(board_names[12]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO X870E-P WIFI
-    { &(board_names[13]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MPG X870I EDGE TI EVO WIFI (MS-7E50)
-    { &(board_names[14]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850 GAMING PLUS WIFI (MS-7E56)
-    { &(board_names[15]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO X870-P WIFI
-    { &(board_names[16]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MPG X870E EDGE TI WIFI
-    { &(board_names[17]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG B850 TOMAHAWK MAX WIFI
-    { &(board_names[18]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-P WIFI (MS-7E71)
-    { &(board_names[19]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG Z890 TOMAHAWK WIFI (MS-7E32)
-    { &(board_names[20]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MPG B850 EDGE TI WIFI (MS-7E62)
-    { &(board_names[21]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-VC WIFI6E (MS-7E71)
-    { &(board_names[22]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG B850 TOMAHAWK WIFI (MS-7E53)
-    { &(board_names[23]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MEG Z890 UNIFY-X (MS-7E20)
-    { &(board_names[24]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO X870E-S EVO WIFI (MS-7E86)
-    { &(board_names[25]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG X870E GAMING MAX WIFI (MS-7E86)
-    { &(board_names[26]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO Z890-P WIFI (MS-7E34)
-    { &(board_names[27]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850 GAMING PLUS WIFI PZ (MS-7E75)
-    { &(board_names[28]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG X870E TOMAHAWK MAX WIFI PZ (MS-7E84)
-    { &(board_names[29]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-A WIFI PZ (MS-7E78)
-    { &(board_names[30]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850MPOWER (MS-7E83)
-    { &(board_names[31]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B840M GAMING WIFI6E (MS-7E76)
-    { &(board_names[32]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-A WIFI (MS-7E66)
-    { &(board_names[33]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850-S WIFI6E (MS-7E80)
+    { &(board_names[8]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI Z890 GAMING PLUS WIFI 6E
+    { &(board_names[9]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI X870E GAMING PLUS WIFI
+    { &(board_names[10]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },      // MSI MAG X870E TOMAHAWK WIFI
+    { &(board_names[11]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850-P WIFI (MS-7E56)
+    { &(board_names[12]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850M GAMING PLUS WIFI
+    { &(board_names[13]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO X870E-P WIFI
+    { &(board_names[14]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MPG X870I EDGE TI EVO WIFI (MS-7E50)
+    { &(board_names[15]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850 GAMING PLUS WIFI (MS-7E56)
+    { &(board_names[16]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO X870-P WIFI
+    { &(board_names[17]), 0,  10, 0, 1, &zone_set2,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MPG X870E EDGE TI WIFI
+    { &(board_names[18]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG B850 TOMAHAWK MAX WIFI
+    { &(board_names[19]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-P WIFI (MS-7E71)
+    { &(board_names[20]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG Z890 TOMAHAWK WIFI (MS-7E32)
+    { &(board_names[21]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MPG B850 EDGE TI WIFI (MS-7E62)
+    { &(board_names[22]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-VC WIFI6E (MS-7E71)
+    { &(board_names[23]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG B850 TOMAHAWK WIFI (MS-7E53)
+    { &(board_names[24]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MEG Z890 UNIFY-X (MS-7E20)
+    { &(board_names[25]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO X870E-S EVO WIFI (MS-7E86)
+    { &(board_names[26]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG X870E GAMING MAX WIFI (MS-7E86)
+    { &(board_names[27]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO Z890-P WIFI (MS-7E34)
+    { &(board_names[28]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850 GAMING PLUS WIFI PZ (MS-7E75)
+    { &(board_names[29]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI MAG X870E TOMAHAWK MAX WIFI PZ (MS-7E84)
+    { &(board_names[30]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-A WIFI PZ (MS-7E78)
+    { &(board_names[31]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850MPOWER (MS-7E83)
+    { &(board_names[32]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B840M GAMING WIFI6E (MS-7E76)
+    { &(board_names[33]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850M-A WIFI (MS-7E66)
+    { &(board_names[34]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850-S WIFI6E (MS-7E80)
+    { &(board_names[35]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850M GAMING WIFI (MS-7E82)
+    { &(board_names[36]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI PRO B850-S EVO WIFI (MS-7E97)
+    { &(board_names[37]), 0,  0,  0, 1, &zone_set1,  MSIMotherboard761Controller::DIRECT_MODE_ZONE_BASED },     // MSI B850M GAMING WIFI6E (MS-7E87)
 };
 
 enum MSI_ZONE setup_map [] =
@@ -194,10 +211,11 @@ unsigned char * initializer_array()
 
 void init_packet(FeaturePacket_Zone_761 * packet)
 {
+    packet->dirty         = false;
     packet->packet.fixed1 = 0x09;
     packet->packet.fixed2 = 0x00;
     packet->packet.fixed3 = 0x00;
-    packet->packet.hdr2 = 240;
+    packet->packet.hdr2   = 240;
 
     for(int i = 0; i < NUM_LEDS_761; i++)
     {
@@ -225,6 +243,7 @@ MSIMotherboard761Controller::MSIMotherboard761Controller(hid_device* handle, con
     if(board_config != nullptr)
     {
         supported_zones     = (std::vector<MSI_ZONE>*) board_config->supported_zones;
+        numof_pipe1_leds    = board_config->numof_pipe1_leds;
         unsigned int max    = 0;
 
         for(std::size_t i = 0; i < board_config->supported_zones[0].size(); i++)
@@ -302,24 +321,33 @@ MSIMotherboard761Controller::MSIMotherboard761Controller(hid_device* handle, con
             data->jargb1.zone           = MSI_ZONE_JARGB_1;
             data->jargb2.zone           = MSI_ZONE_JARGB_2;
             data->jargb3.zone           = MSI_ZONE_JARGB_3;
+            data->jpipe1.zone           = MSI_ZONE_J_PIPE_1;
 
             data->jaf.packet.hdr0       = 0x08;
             data->jargb1.packet.hdr0    = 0x04;
             data->jargb2.packet.hdr0    = 0x04;
             data->jargb3.packet.hdr0    = 0x04;
+            data->jpipe1.packet.hdr0    = 0x06;
 
             data->jaf.packet.hdr1       = 0x00;
             data->jargb1.packet.hdr1    = 0x00;
             data->jargb2.packet.hdr1    = 0x01;
             data->jargb3.packet.hdr1    = 0x02;
+            data->jpipe1.packet.hdr1    = 0x00;
 
             init_packet(&data->jaf);
             init_packet(&data->jargb1);
             init_packet(&data->jargb2);
             init_packet(&data->jargb3);
+            init_packet(&data->jpipe1);
+            data->jpipe1.packet.hdr2 = numof_pipe1_leds;
         }
 
-        free(conf_arr);
+        /*-------------------------------------------------*\
+        | Sent again when a zone is resized                 |
+        \*-------------------------------------------------*/
+        setup_data  = conf_arr;
+        setup_dirty = false;
     }
     else
     {
@@ -336,6 +364,12 @@ MSIMotherboard761Controller::~MSIMotherboard761Controller()
     {
         delete data;
         data = nullptr;
+    }
+
+    if(setup_data)
+    {
+        free(setup_data);
+        setup_data = nullptr;
     }
 
     for(ZoneConfig& zone : zone_configs)
@@ -404,27 +438,37 @@ bool MSIMotherboard761Controller::Update
     bool /*save*/
     )
 {
-    int ret = 0;
     bool flag = true;
-    ret = hid_send_feature_report(dev, GET_CHAR_PTR_REF(data->jaf.packet) , sizeof(FeaturePacket_PerLED_761));
-    if(ret < 0)
+    FeaturePacket_Zone_761* packets[] = { &data->jaf, &data->jargb1, &data->jargb2, &data->jargb3, &data->jpipe1 };
+
+    SendConfiguration();
+
+    /*-----------------------------------------------------*\
+    | Only send changed zones on boards with JPIPE1 so     |
+    | updating onboard LEDs does not clear the headers.    |
+    \*-----------------------------------------------------*/
+    for(unsigned int i = 0; i < sizeof(packets) / sizeof(packets[0]); i++)
     {
-        flag = false;
-    }
-    ret = hid_send_feature_report(dev, GET_CHAR_PTR_REF(data->jargb1.packet) , sizeof(FeaturePacket_PerLED_761));
-    if(ret < 0)
-    {
-        flag = false;
-    }
-    ret = hid_send_feature_report(dev, GET_CHAR_PTR_REF(data->jargb2.packet) , sizeof(FeaturePacket_PerLED_761));
-    if(ret < 0)
-    {
-        flag = false;
-    }
-    ret = hid_send_feature_report(dev, GET_CHAR_PTR_REF(data->jargb3.packet) , sizeof(FeaturePacket_PerLED_761));
-    if(ret < 0)
-    {
-        flag = false;
+        FeaturePacket_Zone_761* packet = packets[i];
+
+        if((packet->zone == MSI_ZONE_J_PIPE_1) && (numof_pipe1_leds == 0))
+        {
+            continue;
+        }
+
+        if((numof_pipe1_leds > 0) && !packet->dirty)
+        {
+            continue;
+        }
+
+        if(hid_send_feature_report(dev, GET_CHAR_PTR_REF(packet->packet), sizeof(FeaturePacket_PerLED_761)) < 0)
+        {
+            flag = false;
+        }
+        else
+        {
+            packet->dirty = false;
+        }
     }
 
     return flag;
@@ -488,17 +532,21 @@ void MSIMotherboard761Controller::SetLedColor
     case MSI_ZONE_JARGB_3:
         ptr = &data->jargb3;
         break;
+    case MSI_ZONE_J_PIPE_1:
+        ptr = &data->jpipe1;
+        break;
     default:
         break;
     }
 
     std::size_t candidate_index = (index * 3);
 
-    if(index < GetMaxDirectLeds(zone))
+    if((ptr != nullptr) && (index < GetMaxDirectLeds(zone)))
     {
         set_data_color(ptr, candidate_index,     red);
         set_data_color(ptr, candidate_index + 1, grn);
         set_data_color(ptr, candidate_index + 2, blu);
+        ptr->dirty = true;
     }
 }
 
@@ -605,11 +653,64 @@ void MSIMotherboard761Controller::GetMode
 
 void MSIMotherboard761Controller::SetZoneLEDCount
     (
-    MSI_ZONE        /*zone*/,
-    unsigned char   /*led_num*/
+    MSI_ZONE        zone,
+    unsigned char   led_num
     )
 {
-    return;
+    FeaturePacket_Zone_761* packet = nullptr;
+
+    if(!dev)
+    {
+        return;
+    }
+
+    switch(zone)
+    {
+        case MSI_ZONE_JAF:
+            packet = &data->jaf;
+            break;
+        case MSI_ZONE_JARGB_1:
+            packet = &data->jargb1;
+            break;
+        case MSI_ZONE_JARGB_2:
+            packet = &data->jargb2;
+            break;
+        case MSI_ZONE_JARGB_3:
+            packet = &data->jargb3;
+            break;
+        default:
+            return;
+    }
+
+    /*-----------------------------------------------------*\
+    | LED count is the last byte of the zone's config row   |
+    \*-----------------------------------------------------*/
+    if(setup_data[ARRAY_ROW(zone, 16)] != led_num)
+    {
+        setup_data[ARRAY_ROW(zone, 16)] = led_num;
+        setup_dirty                     = true;
+    }
+
+    packet->packet.hdr2 = led_num;
+}
+
+void MSIMotherboard761Controller::SendConfiguration()
+{
+    if(!dev || !setup_dirty)
+    {
+        return;
+    }
+
+    /*-----------------------------------------------------*\
+    | Stays dirty on failure so the next update tries again |
+    \*-----------------------------------------------------*/
+    if(hid_send_feature_report(dev, setup_data, SETUP_ARRAY_SIZE) < 0)
+    {
+        LOG_ERROR("[%s]: failed to send configuration", name.c_str());
+        return;
+    }
+
+    setup_dirty = false;
 }
 
 void MSIMotherboard761Controller::SetDirectMode
@@ -637,6 +738,9 @@ size_t MSIMotherboard761Controller::GetMaxDirectLeds
         case MSI_ZONE_JARGB_2:
         case MSI_ZONE_JARGB_3:
             return 240;
+            break;
+        case MSI_ZONE_J_PIPE_1:
+            return numof_pipe1_leds;
             break;
         default:
             return 1;

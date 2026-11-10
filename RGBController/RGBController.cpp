@@ -17,6 +17,11 @@
 #include "StringUtils.h"
 
 /*---------------------------------------------------------*\
+| Upper bound for WaitForDeviceUpdate(), in milliseconds    |
+\*---------------------------------------------------------*/
+#define DEVICE_UPDATE_WAIT_TIMEOUT_MS   60000
+
+/*---------------------------------------------------------*\
 | Macros for copying data fields from set descriptor buffer |
 | while ensuring we don't access out of bounds              |
 \*---------------------------------------------------------*/
@@ -91,6 +96,7 @@ RGBController::RGBController()
     /*-----------------------------------------------------*\
     | Initialize device thread                              |
     \*-----------------------------------------------------*/
+    DeviceCallActive    = false;
     DeviceThreadRunning = true;
     DeviceCallThread    = new std::thread(&RGBController::DeviceCallThreadFunction, this);
 }
@@ -1706,7 +1712,9 @@ void RGBController::SetDeviceSpecificConfiguration(nlohmann::json configuration_
 
     configuration = configuration_string_json.dump();
 
+    DeviceMutex.lock();
     DeviceUpdateDeviceSpecificConfiguration();
+    DeviceMutex.unlock();
 
     AccessMutex.unlock();
 
@@ -1808,7 +1816,9 @@ void RGBController::SetDeviceSpecificZoneConfiguration(int zone, nlohmann::json 
 
     configuration = configuration_string_json.dump();
 
+    DeviceMutex.lock();
     DeviceUpdateDeviceSpecificZoneConfiguration(zone);
+    DeviceMutex.unlock();
 
     AccessMutex.unlock();
 
@@ -1990,6 +2000,27 @@ void RGBController::Shutdown()
     SignalCallsDone.wait(wait_lock, [this]{ return SignalCalls == 0; });
 }
 
+void RGBController::WaitForDeviceUpdate()
+{
+    /*-----------------------------------------------------*\
+    | Wait until the device thread has no queued updates    |
+    | left to write and is not writing to the device.       |
+    | Bounded so that an update which can never complete    |
+    | cannot hang shutdown forever.                         |
+    \*-----------------------------------------------------*/
+    std::unique_lock<std::mutex> wait_lock(DeviceCallMutex);
+
+    bool update_complete = DeviceCallDone.wait_for(wait_lock, std::chrono::milliseconds(DEVICE_UPDATE_WAIT_TIMEOUT_MS), [this]
+    {
+        return(!CallFlag_UpdateLEDs.load() && !CallFlag_UpdateMode.load() && !DeviceCallActive);
+    });
+
+    if(!update_complete)
+    {
+        LOG_WARNING("[RGBController] %s: Timed out waiting for pending device updates", name.c_str());
+    }
+}
+
 void RGBController::UpdateLEDs()
 {
     CallFlag_UpdateLEDs = true;
@@ -2000,7 +2031,9 @@ void RGBController::UpdateLEDs()
 void RGBController::UpdateZoneLEDs(int zone)
 {
     AccessMutex.lock_shared();
+    DeviceMutex.lock();
     DeviceUpdateZoneLEDs(zone);
+    DeviceMutex.unlock();
     AccessMutex.unlock_shared();
 
     SignalUpdate(RGBCONTROLLER_UPDATE_REASON_UPDATELEDS);
@@ -2009,7 +2042,9 @@ void RGBController::UpdateZoneLEDs(int zone)
 void RGBController::UpdateSingleLED(int led)
 {
     AccessMutex.lock_shared();
+    DeviceMutex.lock();
     DeviceUpdateSingleLED(led);
+    DeviceMutex.unlock();
     AccessMutex.unlock_shared();
 
     SignalUpdate(RGBCONTROLLER_UPDATE_REASON_UPDATELEDS);
@@ -2025,7 +2060,9 @@ void RGBController::UpdateMode()
 void RGBController::UpdateZoneMode(int zone)
 {
     AccessMutex.lock_shared();
+    DeviceMutex.lock();
     DeviceUpdateZoneMode(zone);
+    DeviceMutex.unlock();
     AccessMutex.unlock_shared();
 
     SignalUpdate(RGBCONTROLLER_UPDATE_REASON_UPDATEMODE);
@@ -2034,7 +2071,9 @@ void RGBController::UpdateZoneMode(int zone)
 void RGBController::SaveMode()
 {
     AccessMutex.lock_shared();
+    DeviceMutex.lock();
     DeviceSaveMode();
+    DeviceMutex.unlock();
     AccessMutex.unlock_shared();
 
     SignalUpdate(RGBCONTROLLER_UPDATE_REASON_SAVEMODE);
@@ -2047,36 +2086,65 @@ void RGBController::DeviceCallThreadFunction()
 
     while(DeviceThreadRunning.load() == true)
     {
-        if(CallFlag_UpdateMode.load() == true)
+        /*-------------------------------------------------*\
+        | Snapshot both flags at the same time to prevent   |
+        | scenario where an UpdateMode->UpdateLEDs sequence |
+        | is inadvertently executed out of order, which can |
+        | lead to the LED color being dropped.              |
+        \*-------------------------------------------------*/
+        bool update_mode = CallFlag_UpdateMode.load();
+        bool update_leds = CallFlag_UpdateLEDs.load();
+
+        /*-------------------------------------------------*\
+        | Mark the device thread busy before starting the   |
+        | queued updates so that WaitForDeviceUpdate()      |
+        | cannot return while a write is in progress.       |
+        \*-------------------------------------------------*/
+        if(update_mode || update_leds)
+        {
+            DeviceCallMutex.lock();
+            DeviceCallActive = true;
+            DeviceCallMutex.unlock();
+        }
+
+        if(update_mode == true)
         {
             if(flags & CONTROLLER_FLAG_RESET_BEFORE_UPDATE)
             {
                 AccessMutex.lock_shared();
                 CallFlag_UpdateMode = false;
+                DeviceMutex.lock();
                 DeviceUpdateMode();
+                DeviceMutex.unlock();
                 AccessMutex.unlock_shared();
             }
             else
             {
                 AccessMutex.lock_shared();
+                DeviceMutex.lock();
                 DeviceUpdateMode();
+                DeviceMutex.unlock();
                 CallFlag_UpdateMode = false;
                 AccessMutex.unlock_shared();
             }
         }
-        if(CallFlag_UpdateLEDs.load() == true)
+        if(update_leds == true)
         {
             if(flags & CONTROLLER_FLAG_RESET_BEFORE_UPDATE)
             {
                 AccessMutex.lock_shared();
                 CallFlag_UpdateLEDs = false;
+                DeviceMutex.lock();
                 DeviceUpdateLEDs();
+                DeviceMutex.unlock();
                 AccessMutex.unlock_shared();
             }
             else
             {
                 AccessMutex.lock_shared();
+                DeviceMutex.lock();
                 DeviceUpdateLEDs();
+                DeviceMutex.unlock();
                 CallFlag_UpdateLEDs = false;
                 AccessMutex.unlock_shared();
             }
@@ -2084,6 +2152,19 @@ void RGBController::DeviceCallThreadFunction()
         else
         {
            std::this_thread::sleep_for(1ms);
+        }
+
+        /*-------------------------------------------------*\
+        | Mark the device thread idle once the queued       |
+        | updates are written and wake any waiter           |
+        \*-------------------------------------------------*/
+        if(update_mode || update_leds)
+        {
+            DeviceCallMutex.lock();
+            DeviceCallActive = false;
+            DeviceCallMutex.unlock();
+
+            DeviceCallDone.notify_all();
         }
     }
 }
@@ -2181,7 +2262,9 @@ void RGBController::ConfigureZone(int zone_idx, zone new_zone)
         zones[zone_idx].flags          &= ~ZONE_FLAG_MANUALLY_CONFIGURED_DEVICE_SPECIFIC;
     }
 
+    DeviceMutex.lock();
     DeviceConfigureZone(zone_idx);
+    DeviceMutex.unlock();
 
     AccessMutex.unlock();
 
@@ -2228,7 +2311,9 @@ void RGBController::ConfigureDevice(controller_flags new_flags, std::string new_
         flags |= (new_flags & CONTROLLER_FLAG_MANUALLY_CONFIGURED_DEVICE_SPECIFIC);
     }
 
+    DeviceMutex.lock();
     DeviceConfigureDevice();
+    DeviceMutex.unlock();
 
     AccessMutex.unlock();
 

@@ -1185,6 +1185,7 @@ keyboard_keymap_overlay_values razer_laptop_with_spacebar_layout
         \*-------------------------------------------------------------------------------------------------------------------------------------*/
         {   0,      0,      0,          0,          KEY_EN_UNUSED,              KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Remove Escape @ 0,0
         {   0,      0,      1,          0,          KEY_EN_ESCAPE,              KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Insert Escape @ 0,1
+        {   0,      0,      14,         0,          KEY_EN_DELETE,              KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Insert Delete key
         {   0,      0,      15,         0,          KEY_EN_POWER,               KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Insert Power key
         {   0,      1,      0,          0,          KEY_EN_UNUSED,              KEY_EN_UNUSED,              KEYBOARD_OPCODE_INSERT_SHIFT_RIGHT, },  // Move Backtick 1 right (Shifts row)
         {   0,      1,      14,         0,          KEY_EN_UNUSED,              KEY_EN_UNUSED,              KEYBOARD_OPCODE_INSERT_SHIFT_RIGHT, },  // Move Backspace 1 right
@@ -1206,8 +1207,8 @@ keyboard_keymap_overlay_values razer_laptop_with_spacebar_layout
         {   0,      5,      11,         0,          KEY_EN_RIGHT_CONTROL,       KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Swap RGT_FNC for RGT_CTL
         {   0,      5,      12,         0,          KEY_EN_LEFT_ARROW,          KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Swap ARWLFT for RGT_MNU
         {   0,      5,      13,         0,          KEY_EN_UP_ARROW,            KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Swap ARWUP for RGT_CTL
-        {   0,      5,      14,         0,          KEY_EN_RIGHT_ARROW,         KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Insert ARWRGT
-        {   0,      5,      15,         0,          KEY_EN_DOWN_ARROW,          KEY_EN_UNUSED,              KEYBOARD_OPCODE_SWAP_ONLY,          },  // Insert ARWDWN
+        {   0,      5,      14,         0,          KEY_EN_RIGHT_ARROW,         KEY_EN_UNUSED,              KEYBOARD_OPCODE_INSERT_SHIFT_RIGHT, },  // Insert ARWRGT
+        {   0,      5,      15,         0,          KEY_EN_DOWN_ARROW,          KEY_EN_UNUSED,              KEYBOARD_OPCODE_INSERT_SHIFT_RIGHT, },  // Insert ARWDWN
     }
 };
 
@@ -1302,6 +1303,7 @@ static const razer_device blackwidow_2019_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1337,6 +1339,7 @@ static const razer_device blackwidow_chroma_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1372,6 +1375,7 @@ static const razer_device blackwidow_chroma_overwatch_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1407,6 +1411,7 @@ static const razer_device blackwidow_chroma_te_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1442,6 +1447,7 @@ static const razer_device blackwidow_chroma_v2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1477,6 +1483,7 @@ static const razer_device blackwidow_elite_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1512,6 +1519,7 @@ static const razer_device blackwidow_v3_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1547,6 +1555,7 @@ static const razer_device blackwidow_v3_pro_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1582,6 +1591,7 @@ static const razer_device blackwidow_v3_pro_bluetooth_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1617,6 +1627,7 @@ static const razer_device blackwidow_v3_pro_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -1652,6 +1663,7 @@ static const razer_device blackwidow_v3_tkl_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -1687,6 +1699,7 @@ static const razer_device blackwidow_v3_mini_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     5,
     16,
     {
@@ -1714,6 +1727,7 @@ static const razer_device blackwidow_v3_mini_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x9F,
+    RAZER_LED_ID_BACKLIGHT,
     5,
     16,
     {
@@ -1774,6 +1788,7 @@ static const razer_device blackwidow_v4_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     8,
     23,
     {
@@ -1857,6 +1872,7 @@ static const razer_device blackwidow_v4_pro_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     8,
     23,
     {
@@ -1892,6 +1908,7 @@ static const razer_device blackwidow_v4_pro_75_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -1927,6 +1944,7 @@ static const razer_device blackwidow_v4_pro_75_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -1962,6 +1980,7 @@ static const razer_device blackwidow_v4_75_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -1997,6 +2016,7 @@ static const razer_device blackwidow_v4_x_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2032,6 +2052,7 @@ static const razer_device blackwidow_v4_tkl_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -2067,6 +2088,7 @@ static const razer_device blackwidow_v4_tkl_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x9F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -2102,6 +2124,7 @@ static const razer_device blackwidow_v4_lowprofile_tkl_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -2137,6 +2160,7 @@ static const razer_device blackwidow_v4_lowprofile_tkl_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x9F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -2172,6 +2196,7 @@ static const razer_device blackwidow_x_chroma_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2207,6 +2232,7 @@ static const razer_device blackwidow_x_chroma_te_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2242,6 +2268,7 @@ static const razer_device cynosa_chroma_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2277,6 +2304,7 @@ static const razer_device cynosa_v2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2312,6 +2340,7 @@ static const razer_device cynosa_lite_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -2347,6 +2376,7 @@ static const razer_device ornata_chroma_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2382,6 +2412,7 @@ static const razer_device ornata_chroma_v2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2417,6 +2448,7 @@ static const razer_device ornata_v3_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     10,
     {
@@ -2452,6 +2484,7 @@ static const razer_device ornata_v3_rev2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     10,
     {
@@ -2487,6 +2520,7 @@ static const razer_device ornata_v3_tkl_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     8,
     {
@@ -2522,6 +2556,7 @@ static const razer_device ornata_v3_x_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -2557,6 +2592,7 @@ static const razer_device ornata_v3_x_v2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -2592,6 +2628,7 @@ static const razer_device deathstalker_chroma_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     12,
     {
@@ -2627,6 +2664,7 @@ static const razer_device deathstalker_v2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2664,6 +2702,7 @@ static const razer_device deathstalker_v2_pro_tkl_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     6,
     17,
     {
@@ -2684,6 +2723,7 @@ static const razer_device deathstalker_v2_pro_tkl_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x9F,
+    RAZER_LED_ID_ZERO,
     6,
     17,
     {
@@ -2719,6 +2759,7 @@ static const razer_device deathstalker_v2_pro_wireless_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x9F,
+    RAZER_LED_ID_ZERO,
     6,
     22,
     {
@@ -2754,6 +2795,7 @@ static const razer_device deathstalker_v2_pro_wired_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x9F,
+    RAZER_LED_ID_ZERO,
     6,
     22,
     {
@@ -2789,6 +2831,7 @@ static const razer_device huntsman_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -2836,6 +2879,7 @@ static const razer_device huntsman_elite_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     9,
     22,
     {
@@ -2883,6 +2927,7 @@ static const razer_device huntsman_v2_analog_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     9,
     22,
     {
@@ -2918,6 +2963,7 @@ static const razer_device huntsman_mini_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     5,
     15,
     {
@@ -2953,6 +2999,7 @@ static const razer_device huntsman_mini_analog_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     5,
     15,
     {
@@ -2988,6 +3035,7 @@ static const razer_device huntsman_te_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     18,
     {
@@ -3023,6 +3071,7 @@ static const razer_device huntsman_v2_tkl_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     17,
     {
@@ -3058,6 +3107,7 @@ static const razer_device huntsman_v2_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -3093,6 +3143,7 @@ static const razer_device huntsman_v3_pro_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -3128,6 +3179,7 @@ static const razer_device huntsman_v3_pro_tkl_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     19,
     {
@@ -3167,6 +3219,7 @@ static const razer_device huntsman_v3_he_magnetic_mini_device =
     DEVICE_TYPE_KEYBOARD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     22,
     {
@@ -3206,6 +3259,7 @@ static const razer_device blade_2016_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3241,6 +3295,7 @@ static const razer_device blade_late_2016_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3276,6 +3331,7 @@ static const razer_device blade_15_2018_advanced_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3311,6 +3367,7 @@ static const razer_device blade_15_2018_base_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3346,6 +3403,7 @@ static const razer_device blade_15_2018_mercury_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3381,6 +3439,7 @@ static const razer_device blade_15_2019_advanced_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3416,6 +3475,7 @@ static const razer_device blade_15_2019_base_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -3451,6 +3511,7 @@ static const razer_device blade_15_2019_mercury_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3486,6 +3547,7 @@ static const razer_device blade_15_2019_studio_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3521,6 +3583,7 @@ static const razer_device blade_15_2020_advanced_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3556,6 +3619,7 @@ static const razer_device blade_15_2020_base_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -3591,6 +3655,7 @@ static const razer_device blade_late_2020_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3626,6 +3691,7 @@ static const razer_device blade_15_2021_advanced_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3661,6 +3727,7 @@ static const razer_device blade_15_2021_base_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -3696,6 +3763,7 @@ static const razer_device blade_15_2021_base_v2_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -3731,6 +3799,7 @@ static const razer_device blade_15_late_2021_advanced_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3766,6 +3835,7 @@ static const razer_device blade_14_2021_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3801,6 +3871,7 @@ static const razer_device blade_14_2022_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x1F,
+    RAZER_LED_ID_ZERO,
     6,
     16,
     {
@@ -3836,6 +3907,7 @@ static const razer_device blade_14_2023_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x1F,
+    RAZER_LED_ID_ZERO,
     6,
     16,
     {
@@ -3871,6 +3943,7 @@ static const razer_device blade_15_2022_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x1F,
+    RAZER_LED_ID_ZERO,
     6,
     16,
     {
@@ -3906,6 +3979,7 @@ static const razer_device book_13_2020_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -3941,6 +4015,7 @@ static const razer_device blade_pro_2016_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     25,
     {
@@ -3976,6 +4051,7 @@ static const razer_device blade_pro_2017_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     25,
     {
@@ -4011,6 +4087,7 @@ static const razer_device blade_pro_2017_fullhd_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     25,
     {
@@ -4045,6 +4122,7 @@ static const razer_device blade_pro_2019_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4080,6 +4158,7 @@ static const razer_device blade_pro_late_2019_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4115,6 +4194,7 @@ static const razer_device blade_pro_17_2020_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4150,6 +4230,7 @@ static const razer_device blade_pro_17_2021_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4185,6 +4266,7 @@ static const razer_device blade_stealth_2016_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4220,6 +4302,7 @@ static const razer_device blade_stealth_late_2016_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4255,6 +4338,7 @@ static const razer_device blade_stealth_2017_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4290,6 +4374,7 @@ static const razer_device blade_stealth_late_2017_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4325,6 +4410,7 @@ static const razer_device blade_stealth_2019_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     16,
     {
@@ -4360,6 +4446,7 @@ static const razer_device blade_stealth_late_2019_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -4395,6 +4482,7 @@ static const razer_device blade_stealth_2020_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -4430,6 +4518,7 @@ static const razer_device blade_stealth_late_2020_device =
     DEVICE_TYPE_LAPTOP,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -4469,6 +4558,7 @@ static const razer_device abyssus_elite_dva_edition_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -4504,6 +4594,7 @@ static const razer_device abyssus_essential_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -4551,6 +4642,7 @@ static const razer_device basilisk_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -4586,6 +4678,7 @@ static const razer_device basilisk_essential_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -4657,6 +4750,7 @@ static const razer_device basilisk_ultimate_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     14,
     {
@@ -4728,6 +4822,7 @@ static const razer_device basilisk_ultimate_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     14,
     {
@@ -4775,6 +4870,7 @@ static const razer_device basilisk_v2_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -4834,6 +4930,7 @@ static const razer_device basilisk_v3_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     11,
     {
@@ -4893,6 +4990,7 @@ static const razer_device basilisk_v3_35k_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     11,
     {
@@ -4952,6 +5050,7 @@ static const razer_device basilisk_v3_pro_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
@@ -5011,6 +5110,7 @@ static const razer_device basilisk_v3_pro_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
@@ -5023,6 +5123,7 @@ static const razer_device basilisk_v3_pro_wireless_device =
     },
     NULL
 };
+
 /*-------------------------------------------------------------*\
 |  Razer Basilisk V3 PRO 35K Wired 1532:00CC                    |
 |                                                               |
@@ -5069,11 +5170,12 @@ static const razer_device basilisk_v3_pro_35k_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
-        &basilisk_v3_pro_35k_wired_scroll_wheel_zone,
         &basilisk_v3_pro_35k_wired_logo_zone,
+        &basilisk_v3_pro_35k_wired_scroll_wheel_zone,
         &basilisk_v3_pro_35k_wired_ledstrip_zone,
         NULL,
         NULL,
@@ -5128,11 +5230,12 @@ static const razer_device basilisk_v3_pro_35k_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
-        &basilisk_v3_pro_35k_wireless_scroll_wheel_zone,
         &basilisk_v3_pro_35k_wireless_logo_zone,
+        &basilisk_v3_pro_35k_wireless_scroll_wheel_zone,
         &basilisk_v3_pro_35k_wireless_ledstrip_zone,
         NULL,
         NULL,
@@ -5160,6 +5263,7 @@ static const razer_device basilisk_v3_pro_35k_pg_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
@@ -5192,6 +5296,7 @@ static const razer_device basilisk_v3_pro_35k_pg_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
@@ -5224,6 +5329,7 @@ static const razer_device basilisk_v3_pro_35k_pg_bluetooth_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
@@ -5283,6 +5389,7 @@ static const razer_device basilisk_v3_pro_bluetooth_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     13,
     {
@@ -5318,12 +5425,133 @@ static const razer_device basilisk_v3_x_hyperspeed_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     1,
     {
         &basilisk_v3_x_hyperspeed_scroll_wheel_zone,
         NULL,
         NULL,
+        NULL,
+        NULL,
+        NULL
+    },
+    NULL
+};
+
+/*-------------------------------------------------------------*\
+|  Razer Basilisk V4 PRO Wired 1532:00E2                        |
+|                                                               |
+|  Zone "Logo"                                                  |
+|       Single                                                  |
+|       1 LED                                                   |
+|                                                               |
+|  Zone "Scroll Wheel"                                          |
+|       Single                                                  |
+|       1 LED                                                   |
+|                                                               |
+|  Zone "LED Strip"                                             |
+|       Linear                                                  |
+|       5 LED                                                   |
+\*-------------------------------------------------------------*/
+static const razer_zone basilisk_v4_pro_wired_scroll_wheel_zone =
+{
+    "Scroll Wheel",
+    ZONE_TYPE_SINGLE,
+    1,
+    1
+};
+
+static const razer_zone basilisk_v4_pro_wired_logo_zone =
+{
+    "Logo",
+    ZONE_TYPE_SINGLE,
+    1,
+    1
+};
+
+static const razer_zone basilisk_v4_pro_wired_ledstrip_zone =
+{
+    "LED Strip",
+    ZONE_TYPE_LINEAR,
+    1,
+    5
+};
+
+static const razer_device basilisk_v4_pro_wired_device =
+{
+    "Razer Basilisk V4 Pro (Wired)",
+    RAZER_BASILISK_V4_PRO_WIRED_PID,
+    DEVICE_TYPE_MOUSE,
+    RAZER_MATRIX_TYPE_EXTENDED,
+    0x1F,
+    RAZER_LED_ID_ZERO,
+    1,
+    13,
+    {
+        &basilisk_v4_pro_wired_logo_zone,
+        &basilisk_v4_pro_wired_scroll_wheel_zone,
+        &basilisk_v4_pro_wired_ledstrip_zone,
+        NULL,
+        NULL,
+        NULL
+    },
+    NULL
+};
+
+/*-------------------------------------------------------------*\
+|  Razer Basilisk V4 PRO Wireless 1532:00E3                     |
+|                                                               |
+|  Zone "Logo"                                                  |
+|       Single                                                  |
+|       1 LED                                                   |
+|                                                               |
+|  Zone "Scroll Wheel"                                          |
+|       Single                                                  |
+|       1 LED                                                   |
+|                                                               |
+|  Zone "LED Strip"                                             |
+|       Linear                                                  |
+|       5 LED                                                   |
+\*-------------------------------------------------------------*/
+static const razer_zone basilisk_v4_pro_wireless_scroll_wheel_zone =
+{
+    "Scroll Wheel",
+    ZONE_TYPE_SINGLE,
+    1,
+    1
+};
+
+static const razer_zone basilisk_v4_pro_wireless_logo_zone =
+{
+    "Logo",
+    ZONE_TYPE_SINGLE,
+    1,
+    1
+};
+
+static const razer_zone basilisk_v4_pro_wireless_ledstrip_zone =
+{
+    "LED Strip",
+    ZONE_TYPE_LINEAR,
+    1,
+    5
+};
+
+static const razer_device basilisk_v4_pro_wireless_device =
+{
+    "Razer Basilisk V4 Pro (Wireless)",
+    RAZER_BASILISK_V4_PRO_WIRELESS_PID,
+    DEVICE_TYPE_MOUSE,
+    RAZER_MATRIX_TYPE_EXTENDED,
+    0x1F,
+    RAZER_LED_ID_ZERO,
+    1,
+    13,
+    {
+        &basilisk_v4_pro_wireless_logo_zone,
+        &basilisk_v4_pro_wireless_scroll_wheel_zone,
+        &basilisk_v4_pro_wireless_ledstrip_zone,
         NULL,
         NULL,
         NULL
@@ -5353,6 +5581,7 @@ static const razer_device cobra_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -5412,6 +5641,7 @@ static const razer_device cobra_pro_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     11,
     {
@@ -5471,6 +5701,7 @@ static const razer_device cobra_pro_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     11,
     {
@@ -5518,6 +5749,7 @@ static const razer_device deathadder_chroma_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_CUSTOM,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -5565,6 +5797,7 @@ static const razer_device deathadder_elite_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     2,
     {
@@ -5612,6 +5845,7 @@ static const razer_device deathadder_essential_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -5659,6 +5893,7 @@ static const razer_device deathadder_essential_v2_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     2,
     {
@@ -5706,6 +5941,7 @@ static const razer_device deathadder_essential_white_edition_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -5753,6 +5989,7 @@ static const razer_device deathadder_v2_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     2,
     {
@@ -5788,6 +6025,7 @@ static const razer_device deathadder_v2_mini_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     1,
     {
@@ -5823,6 +6061,7 @@ static const razer_device deathadder_v2_pro_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -5858,6 +6097,7 @@ static const razer_device deathadder_v2_pro_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -5917,6 +6157,7 @@ static const razer_device diamondback_chroma_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     21,
     {
@@ -5988,6 +6229,7 @@ static const razer_device lancehead_2017_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -6059,6 +6301,7 @@ static const razer_device lancehead_2017_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -6130,6 +6373,7 @@ static const razer_device lancehead_2019_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -6201,6 +6445,7 @@ static const razer_device lancehead_2019_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -6272,6 +6517,7 @@ static const razer_device lancehead_te_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -6307,6 +6553,7 @@ static const razer_device leviathan_v2_device =
     DEVICE_TYPE_SPEAKER,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     2,
     9,
     {
@@ -6342,6 +6589,7 @@ static const razer_device leviathan_v2x_device =
     DEVICE_TYPE_SPEAKER,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     14,
     {
@@ -6377,6 +6625,7 @@ static const razer_device mamba_2012_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_CUSTOM,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     15,
     {
@@ -6412,6 +6661,7 @@ static const razer_device mamba_2012_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_CUSTOM,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     15,
     {
@@ -6447,6 +6697,7 @@ static const razer_device mamba_2015_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     15,
     {
@@ -6482,6 +6733,7 @@ static const razer_device mamba_2015_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     15,
     {
@@ -6529,6 +6781,7 @@ static const razer_device mamba_2018_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -6577,6 +6830,7 @@ static const razer_device mamba_2018_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -6649,6 +6903,7 @@ static const razer_device mamba_elite_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     20,
     {
@@ -6720,6 +6975,7 @@ static const razer_device mamba_te_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     16,
     {
@@ -6768,6 +7024,7 @@ static const razer_device mamba_hyperflux_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     2,
     {
@@ -6827,6 +7084,7 @@ static const razer_device naga_chroma_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     3,
     {
@@ -6886,6 +7144,7 @@ static const razer_device naga_classic_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     3,
     {
@@ -6945,6 +7204,7 @@ static const razer_device naga_hex_v2_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     3,
     {
@@ -7004,6 +7264,7 @@ static const razer_device naga_left_handed_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     3,
     {
@@ -7063,6 +7324,7 @@ static const razer_device naga_trinity_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     3,
     {
@@ -7122,6 +7384,7 @@ static const razer_device naga_pro_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     3,
     {
@@ -7142,6 +7405,7 @@ static const razer_device naga_pro_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     3,
     {
@@ -7189,6 +7453,7 @@ static const razer_device naga_pro_v2_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     2,
     {
@@ -7209,6 +7474,7 @@ static const razer_device naga_pro_v2_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     2,
     {
@@ -7264,6 +7530,7 @@ static const razer_device naga_pro_v3_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     3,
     {
@@ -7284,6 +7551,7 @@ static const razer_device naga_pro_v3_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     3,
     {
@@ -7319,6 +7587,7 @@ static const razer_device viper_8khz_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -7354,6 +7623,7 @@ static const razer_device viper_mini_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_LOGO,
     1,
     1,
     {
@@ -7389,6 +7659,7 @@ static const razer_device viper_ultimate_wired_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -7424,6 +7695,7 @@ static const razer_device viper_ultimate_wireless_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -7459,6 +7731,7 @@ static const razer_device viper_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_LOGO,
     1,
     1,
     {
@@ -7506,6 +7779,7 @@ static const razer_device naga_epic_chroma_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_CUSTOM,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     2,
     {
@@ -7545,6 +7819,7 @@ static const razer_device orbweaver_chroma_device =
     DEVICE_TYPE_KEYPAD,
     RAZER_MATRIX_TYPE_CUSTOM,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     4,
     5,
     {
@@ -7580,6 +7855,7 @@ static const razer_device tartarus_chroma_device =
     DEVICE_TYPE_KEYPAD,
     RAZER_MATRIX_TYPE_CUSTOM,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -7623,6 +7899,7 @@ static const razer_device tartarus_pro_device =
     DEVICE_TYPE_KEYPAD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     21,
     {
@@ -7658,6 +7935,7 @@ static const razer_device tartarus_v2_device =
     DEVICE_TYPE_KEYPAD,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     4,
     6,
     {
@@ -7697,6 +7975,7 @@ static const razer_device firefly_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     15,
     {
@@ -7757,6 +8036,7 @@ static const razer_device firefly_hyperflux_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     14,
     {
@@ -7792,6 +8072,7 @@ static const razer_device firefly_v2_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     19,
     {
@@ -7827,6 +8108,7 @@ static const razer_device firefly_v2_pro_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     17,
     {
@@ -7862,6 +8144,7 @@ static const razer_device goliathus_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     1,
     {
@@ -7897,6 +8180,7 @@ static const razer_device goliathus_chroma_3xl_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     1,
     {
@@ -7932,6 +8216,7 @@ static const razer_device goliathus_extended_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     1,
     {
@@ -7967,6 +8252,7 @@ static const razer_device strider_chroma_device =
     DEVICE_TYPE_MOUSEMAT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     19,
     {
@@ -8006,6 +8292,7 @@ static const razer_device kraken_chroma_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
     0,
+    0,
     1,
     1,
     {
@@ -8040,6 +8327,7 @@ static const razer_device kraken_v2_device =
     RAZER_KRAKEN_V2_PID,
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
+    0,
     0,
     1,
     1,
@@ -8076,6 +8364,7 @@ static const razer_device kraken_ultimate_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
     0,
+    0,
     1,
     1,
     {
@@ -8111,6 +8400,7 @@ static const razer_device kraken_kitty_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     4,
     {
@@ -8162,6 +8452,7 @@ static const razer_device kraken_kitty_black_v2_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    0,
     1,
     4,
     {
@@ -8196,6 +8487,7 @@ static const razer_device kraken_v3_hs_device =
     RAZER_KRAKEN_V3_HYPERSENSE_PID,
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
+    0,
     0,
     1,
     1,
@@ -8232,6 +8524,7 @@ static const razer_device kraken_v3_x_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
     0,
+    0,
     1,
     1,
     {
@@ -8266,6 +8559,7 @@ static const razer_device kraken_v3_device =
     RAZER_KRAKEN_V3_PID,
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
+    0,
     0,
     1,
     1,
@@ -8332,6 +8626,7 @@ static const razer_device kraken_kitty_v2_pro_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_NONE,
     0,
+    0,
     1,
     4,
     {
@@ -8368,6 +8663,7 @@ static const razer_device kraken_v4_wired_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x60,
+    0,
     1,
     9,
     {
@@ -8403,6 +8699,7 @@ static const razer_device kraken_v4_wireless_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x60,
+    0,
     1,
     9,
     {
@@ -8450,6 +8747,7 @@ static const razer_device kraken_kitty_v3_pro_wired_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x60,
+    0,
     1,
     10,
     {
@@ -8497,6 +8795,7 @@ static const razer_device kraken_kitty_v3_pro_wireless_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x60,
+    0,
     1,
     10,
     {
@@ -8556,6 +8855,7 @@ static const razer_device tiamat_71_v2_device =
     DEVICE_TYPE_HEADSET,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     17,
     {
@@ -8607,6 +8907,7 @@ static const razer_device core_device =
     DEVICE_TYPE_GPU,
     RAZER_MATRIX_TYPE_STANDARD,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     9,
     {
@@ -8654,6 +8955,7 @@ static const razer_device core_x_device =
     DEVICE_TYPE_GPU,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     16,
     {
@@ -8689,6 +8991,7 @@ static const razer_device mug_holder_device =
     DEVICE_TYPE_ACCESSORY,
     RAZER_MATRIX_TYPE_LINEAR,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     15,
     {
@@ -8784,6 +9087,7 @@ static const razer_device chromaargb_device =
     DEVICE_TYPE_LEDSTRIP,
     RAZER_MATRIX_TYPE_EXTENDED_ARGB,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     6,
     80,
     {
@@ -8855,6 +9159,7 @@ static const razer_device chromahdk_device =
     DEVICE_TYPE_LEDSTRIP,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     4,
     16,
     {
@@ -8902,6 +9207,7 @@ static const razer_device chroma_pc_case_lighting_kit_device =
     DEVICE_TYPE_LEDSTRIP,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     2,
     16,
     {
@@ -8937,6 +9243,7 @@ static const razer_device base_station_device =
     DEVICE_TYPE_HEADSET_STAND,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_ZERO,
     1,
     15,
     {
@@ -8972,6 +9279,7 @@ static const razer_device mouse_bungee_device =
     DEVICE_TYPE_MOUSE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     8,
     {
@@ -9007,6 +9315,7 @@ static const razer_device base_station_v2_device =
     DEVICE_TYPE_HEADSET_STAND,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     8,
     {
@@ -9042,6 +9351,7 @@ static const razer_device laptop_stand_chroma_device =
     DEVICE_TYPE_LEDSTRIP,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     15,
     {
@@ -9077,6 +9387,7 @@ static const razer_device laptop_stand_chroma_v2_device =
     DEVICE_TYPE_LEDSTRIP,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     15,
     {
@@ -9112,6 +9423,7 @@ static const razer_device mouse_dock_chroma_device =
     DEVICE_TYPE_LIGHT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     1,
     {
@@ -9147,6 +9459,7 @@ static const razer_device mouse_dock_pro_device =
     DEVICE_TYPE_LIGHT,
     RAZER_MATRIX_TYPE_EXTENDED,
     0xFF,
+    RAZER_LED_ID_ZERO,
     1,
     9,
     {
@@ -9195,6 +9508,7 @@ static const razer_device nommo_pro_device =
     DEVICE_TYPE_SPEAKER,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     2,
     8,
     {
@@ -9243,6 +9557,7 @@ static const razer_device nommo_chroma_device =
     DEVICE_TYPE_SPEAKER,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     2,
     24,
     {
@@ -9279,6 +9594,7 @@ static const razer_device charging_pad_chroma_device =
     DEVICE_TYPE_ACCESSORY,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     1,
     10,
     {
@@ -9315,6 +9631,7 @@ static const razer_device o11_dynamic_device =
     DEVICE_TYPE_LEDSTRIP,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x1F,
+    RAZER_LED_ID_ZERO,
     4,
     16,
     {
@@ -9351,6 +9668,7 @@ static const razer_device seiren_emote_device =
     DEVICE_TYPE_MICROPHONE,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     4,
     16,
     {
@@ -9387,6 +9705,7 @@ static const razer_device thunderbolt_4_dock_chroma_device =
     DEVICE_TYPE_ACCESSORY,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     12,
     {
@@ -9423,6 +9742,7 @@ static const razer_device thunderbolt_5_dock_chroma_device =
     DEVICE_TYPE_ACCESSORY,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    RAZER_LED_ID_BACKLIGHT,
     1,
     12,
     {
@@ -9495,6 +9815,7 @@ static const razer_device hanbo_chroma_device =
     DEVICE_TYPE_COOLER,
     RAZER_MATRIX_TYPE_EXTENDED,
     0x3F,
+    0,
     1,
     70,
     {
@@ -9628,6 +9949,8 @@ const razer_device* razer_device_list[] =
     &basilisk_v3_pro_35k_pg_bluetooth_device,
     &basilisk_v3_pro_bluetooth_device,
     &basilisk_v3_x_hyperspeed_device,
+    &basilisk_v4_pro_wired_device,
+    &basilisk_v4_pro_wireless_device,
     &cobra_device,
     &cobra_pro_wired_device,
     &cobra_pro_wireless_device,

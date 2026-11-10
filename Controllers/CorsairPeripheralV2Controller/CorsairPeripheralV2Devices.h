@@ -63,6 +63,8 @@ typedef struct
     uint8_t                             cols;
     const corsair_v2_zone*              zones[CORSAIR_ZONES_MAX];
     keyboard_keymap_overlay_values*     layout_new;
+    uint8_t                             light_ctrl_reg;
+    uint16_t                            pkt_size;
 }   corsair_v2_device;
 
 /*-----------------------------------------------------*\
@@ -76,6 +78,7 @@ typedef struct
 #define CORSAIR_K60_RGB_PRO_LP_PID                  0x1BAD
 #define CORSAIR_K60_RGB_PRO_TKL_B_PID               0x1BC7
 #define CORSAIR_K60_RGB_PRO_TKL_W_PID               0x1BED
+#define CORSAIR_K65_MINI_PID                        0x1BAF
 #define CORSAIR_K70_CORE_RGB_PID                    0x1BFD
 #define CORSAIR_K70_CORE_RGB_TKL_PID                0x2B01
 #define CORSAIR_K70_RGB_PRO_PID                     0x1BC4
@@ -105,6 +108,7 @@ typedef struct
 #define CORSAIR_M75_GAMING_MOUSE_PID                0x1BF0
 #define CORSAIR_M75_WIRELESS_PID                    0x1BF1
 #define CORSAIR_SLIPSTREAM_M75_PID                  0x1BDC
+#define CORSAIR_SCIMITAR_ELITE_RGB_V2_PID           0x1BE3
 #define CORSAIR_SLIPSTREAM_WIRELESS_PID1            0x1BA6
 #define CORSAIR_SLIPSTREAM_WIRELESS_V2_PID1         0x1B66
 #define CORSAIR_SLIPSTREAM_WIRELESS_PID2            0x1B65

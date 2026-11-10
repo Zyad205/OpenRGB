@@ -39,6 +39,46 @@ DetectedControllers DetectRazerControllers(hid_device_info* info, const std::str
         RGBController_Razer* rgb_controller = new RGBController_Razer(controller);
 
         detected_controllers.push_back(rgb_controller);
+
+        /*-------------------------------------------------*\
+        | Wireless receivers report the devices paired to   |
+        | them.  Commands sent through the receiver with a  |
+        | paired device's transaction ID are relayed to     |
+        | that device, so add a controller for each known   |
+        | paired device other than the receiver itself.     |
+        | Other devices report no paired devices.           |
+        \*-------------------------------------------------*/
+        unsigned short paired_pids[RAZER_MAX_PAIRED_DEVICES];
+        unsigned int   paired_count = controller->GetPairedDevicePIDs(paired_pids, RAZER_MAX_PAIRED_DEVICES);
+
+        for(unsigned int paired_idx = 0; paired_idx < paired_count; paired_idx++)
+        {
+            if(paired_pids[paired_idx] == info->product_id)
+            {
+                continue;
+            }
+
+            for(unsigned int device_idx = 0; device_idx < RAZER_NUM_DEVICES; device_idx++)
+            {
+                if(device_list[device_idx]->pid == paired_pids[paired_idx])
+                {
+                    hid_device* paired_dev = hid_open_path(info->path);
+
+                    if(paired_dev)
+                    {
+                        std::string          paired_name        = device_list[device_idx]->name + " (" + device_list[controller->GetDeviceIndex()]->name + ")";
+                        RazerController*     paired_controller  = new RazerController(paired_dev, paired_dev, info->path, paired_pids[paired_idx], paired_name);
+
+                        paired_controller->SetWaitForResponse(true);
+
+                        RGBController_Razer* paired_rgb_controller = new RGBController_Razer(paired_controller);
+
+                        detected_controllers.push_back(paired_rgb_controller);
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     return(detected_controllers);
@@ -329,6 +369,8 @@ REGISTER_HID_DETECTOR_IPU("Razer Basilisk V3 Pro 35K Phantom Green (Wired)",    
 REGISTER_HID_DETECTOR_IPU("Razer Basilisk V3 Pro 35K Phantom Green (Wireless)", DetectRazerControllers,     RAZER_VID,  RAZER_BASILISK_V3_PRO_35K_PG_WIRELESS_PID,      0x00,   0x01,   0x02);
 // REGISTER_HID_DETECTOR_PU("Razer Basilisk V3 Pro 35K Phantom Green (Bluetooth)",DetectRazerControllers,      RAZER_BLUETOOTH_VID, RAZER_BASILISK_V3_PRO_35K_PG_BLUETOOTH_PID,    0x01,   0x02);
 REGISTER_HID_DETECTOR_IPU("Razer Basilisk V3 X HyperSpeed",                  DetectRazerControllers,        RAZER_VID,  RAZER_BASILISK_V3_X_HYPERSPEED_PID,             0x00,   0x01,   0x02);
+REGISTER_HID_DETECTOR_IPU("Razer Basilisk V4 Pro (Wired)",                   DetectRazerControllers,        RAZER_VID,  RAZER_BASILISK_V4_PRO_WIRED_PID,                0x03,   0x0C,   0x01);
+REGISTER_HID_DETECTOR_IPU("Razer Basilisk V4 Pro (Wireless)",                DetectRazerControllers,        RAZER_VID,  RAZER_BASILISK_V4_PRO_WIRELESS_PID,             0x03,   0x0C,   0x01);
 REGISTER_HID_DETECTOR_IPU("Razer Cobra",                                     DetectRazerControllers,        RAZER_VID,  RAZER_COBRA_PID,                                0x00,   0x01,   0x02);
 REGISTER_HID_DETECTOR_IPU("Razer Cobra Pro (Wired)",                         DetectRazerControllers,        RAZER_VID,  RAZER_COBRA_PRO_WIRED_PID,                      0x00,   0x01,   0x02);
 REGISTER_HID_DETECTOR_IPU("Razer Cobra Pro (Wireless)",                      DetectRazerControllers,        RAZER_VID,  RAZER_COBRA_PRO_WIRELESS_PID,                   0x00,   0x01,   0x02);

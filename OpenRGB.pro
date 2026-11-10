@@ -18,6 +18,7 @@ CONFIG +=   c++17                                                               
             lrelease                                                                            \
             embed_translations                                                                  \
             silent                                                                              \
+            precompile_header                                                                   \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,7 +26,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 # Application Configuration                                                                     #
 #-----------------------------------------------------------------------------------------------#
 MAJOR       = 1
-MINOR       = 0
+MINOR       = 1
 SUFFIX      = git
 
 SHORTHASH   = $$system("git rev-parse --short=7 HEAD")
@@ -272,6 +273,9 @@ SOURCES +=                                                                      
     RGBController/RGBControllerKeyNames.cpp                                                     \
     RGBController/RGBController_Network.cpp                                                     \
     RGBController/RGBController_Virtual.cpp                                                     \
+
+PRECOMPILED_HEADER +=                                                                           \
+    precompiled_header.h                                                                        \
 
 RESOURCES +=                                                                                    \
     qt/resources.qrc                                                                            \

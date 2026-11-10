@@ -165,6 +165,8 @@
 #define RAZER_BASILISK_V3_PRO_35K_PG_BLUETOOTH_PID      0x00D8
 #define RAZER_BASILISK_V3_PRO_BLUETOOTH_PID             0x00AC
 #define RAZER_BASILISK_V3_X_HYPERSPEED_PID              0x00B9
+#define RAZER_BASILISK_V4_PRO_WIRED_PID                 0x00E2
+#define RAZER_BASILISK_V4_PRO_WIRELESS_PID              0x00E3
 #define RAZER_COBRA_PID                                 0x00A3
 #define RAZER_COBRA_PRO_WIRED_PID                       0x00AF
 #define RAZER_COBRA_PRO_WIRELESS_PID                    0x00B0
@@ -298,6 +300,7 @@ typedef struct
     device_type                         type;
     unsigned char                       matrix_type;
     unsigned char                       transaction_id;
+    unsigned char                       led_id;
     unsigned int                        rows;
     unsigned int                        cols;
     const razer_zone*                   zones[RAZER_MAX_ZONES];

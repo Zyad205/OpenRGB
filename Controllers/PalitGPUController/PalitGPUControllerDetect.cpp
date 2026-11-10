@@ -147,6 +147,8 @@ REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 3090 Phoenix",          DetectPa
 REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 3090 Ti Phantom",       DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3090TI_DEV,       GAINWARD_SUB_VEN,   GAINWARD_RTX_3090TI_PHANTOM,                0x49);
 REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 4080 Phantom GS",       DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX4080_DEV,         GAINWARD_SUB_VEN,   GAINWARD_RTX_4080_PHANTOM_GS_SUB_DEV,       0x49);
 REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 4090 Phantom",          DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX4090_DEV,         GAINWARD_SUB_VEN,   GAINWARD_RTX_4090_PHANTOM_SUB_DEV,          0x49);
+REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 5070 Ti Phoenix",       DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX5070TI_DEV,       GAINWARD_SUB_VEN,   GAINWARD_RTX_5070TI_PHOENIX,                0x49);
+REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 5070 Ti Phoenix-S",     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX5070TI_DEV,       GAINWARD_SUB_VEN,   GAINWARD_RTX_5070TI_PHOENIX_S,              0x49);
 REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 5080 Phoenix",          DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX5080_DEV,         GAINWARD_SUB_VEN,   GAINWARD_RTX_5080_PHOENIX_SUB_DEV,          0x49);
 
 /*---------------------------------------------------------*\
@@ -155,6 +157,7 @@ REGISTER_I2C_PCI_DETECTOR("Gainward GeForce RTX 5080 Phoenix",          DetectPa
 REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 2060 XLR8 OC EDITION",       DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX2060_TU104_DEV,   PNY_SUB_VEN,        PNY_RTX_2060_XLR8_OC_SUB_DEV,               0x49);
 REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 3060 XLR8 Revel EPIC-X",     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3060_DEV,         PNY_SUB_VEN,        PNY_RTX_3060_XLR8_REVEL_EPIC_X_SUB_DEV,     0x49);
 REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 3070 XLR8 Revel EPIC-X",     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070_DEV,         PNY_SUB_VEN,        PNY_RTX_3070_XLR8_REVEL_EPIC_X_SUB_DEV,     0x49);
+REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 3070 Ti XLR8 Gaming REVEL EPIC-X", DetectPalitGPUv2Controllers, NVIDIA_VEN, NVIDIA_RTX3070TI_DEV, PNY_SUB_VEN, PNY_RTX_3070TI_XLR8_REVEL_EPIC_X_SUB_DEV, 0x49);
 REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 3070 XLR8 Revel EPIC-X LHR", DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070_LHR_DEV,     PNY_SUB_VEN,        PNY_RTX_3070_XLR8_REVEL_EPIC_X_LHR_SUB_DEV, 0x49);
 REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 3080 XLR8 Revel EPIC-X",     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080_DEV,         PNY_SUB_VEN,        PNY_RTX_3080_XLR8_REVEL_EPIC_X_SUB_DEV,     0x49);
 REGISTER_I2C_PCI_DETECTOR("PNY GeForce RTX 3080 Ti XLR8 Revel EPIC-X",  DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080TI_DEV,       PNY_SUB_VEN,        PNY_RTX_3080TI_XLR8_REVEL_EPIC_X_SUB_DEV,   0x49);
@@ -167,15 +170,22 @@ REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 2070 SUPER Jetstream",     DetectPa
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3060",                     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3060_DEV,         PALIT_SUB_VEN,      PALIT_RTX3060_SUB_DEV,                      0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3060 LHR",                 DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3060_LHR_DEV,     PALIT_SUB_VEN,      PALIT_RTX3060_LHR_SUB_DEV,                  0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3060 Ti",                  DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3060TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX3060TI_SUB_DEV,                    0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3060 Ti Dual",             DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3060TI_DEV,       NVIDIA_SUB_VEN,     PALIT_RTX3060TI_SUB_DEV,                    0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3060 Ti LHR",              DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3060TI_LHR_DEV,   PALIT_SUB_VEN,      NVIDIA_RTX3060TI_LHR_DEV,                   0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3070",                     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070_DEV,         PALIT_SUB_VEN,      PALIT_RTX3070_SUB_DEV,                      0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3070 LHR",                 DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070_LHR_DEV,     PALIT_SUB_VEN,      PALIT_RTX3070_LHR_SUB_DEV,                  0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3070 Gamerock LHR",        DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070_LHR_DEV,     PALIT_SUB_VEN,      PALIT_RTX3070_GAMEROCK_SUB_DEV,             0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3070 Ti",                  DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX3070TI_SUB_DEV,                    0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3070 Ti GamingPro",        DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3070TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX3070TI_GAMING_PRO_SUB_DEV,         0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080",                     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080_DEV,         PALIT_SUB_VEN,      PALIT_RTX3080_SUB_DEV,                      0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080 LHR",                 DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080_LHR_DEV,     PALIT_SUB_VEN,      PALIT_RTX3080_LHR_SUB_DEV,                  0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080 Gamerock",            DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080_DEV,         PALIT_SUB_VEN,      PALIT_RTX3080_GAMEROCK_SUB_DEV,             0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080 12GB GamingPro",      DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080_12G_LHR_DEV, PALIT_SUB_VEN,      PALIT_RTX3080_GAMINGPRO_12G_SUB_DEV,        0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080 Ti",                  DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX3080TI_SUB_DEV,                    0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080 Ti Gamerock",         DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX3080TI_GAMEROCK_SUB_DEV,           0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3090",                     DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3090_DEV,         PALIT_SUB_VEN,      PALIT_RTX3090_SUB_DEV,                      0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3090 Gamerock",            DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3090_DEV,         PALIT_SUB_VEN,      PALIT_RTX3090_GAMEROCK_SUB_DEV,             0x49);
+REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3080 Gamerock LHR",        DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3080_LHR_DEV,     PALIT_SUB_VEN,      PALIT_RTX3080_GAMEROCK_SUB_DEV,             0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 3090 Ti Gamerock",         DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX3090TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX3090TI_GAMEROCK_SUB_DEV,           0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 4070 Ti",                  DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX4070TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX4070TI_SUB_DEV,                    0x49);
 REGISTER_I2C_PCI_DETECTOR("Palit GeForce RTX 4070 Ti Gamerock",         DetectPalitGPUv2Controllers,    NVIDIA_VEN, NVIDIA_RTX4070TI_DEV,       PALIT_SUB_VEN,      PALIT_RTX4070TI_GAMEROCK_SUB_DEV,           0x49);

@@ -3,7 +3,7 @@
 |                                                           |
 |   RGBController for ASUS Aura keyboard                    |
 |                                                           |
-|   Adam Honse (CalcProgrammer1)                19 Mar 2020 |
+|   Mola19                                      03 Mar 2021 |
 |                                                           |
 |   This file is part of the OpenRGB project                |
 |   SPDX-License-Identifier: GPL-2.0-or-later               |
@@ -14,33 +14,31 @@
 #include "RGBController.h"
 #include "AsusAuraKeyboardController.h"
 
-enum AuraKeyboardMappingLayoutType
+enum
 {
-    FLARE_LAYOUT,
-    SCOPE_LAYOUT,
-    SCOPE_RX_LAYOUT,
-    SCOPE_TKL_LAYOUT,
-    FALCHION_LAYOUT,
+    AURA_KEYBOARD_BRIGHTNESS_MIN     = 0,
+    AURA_KEYBOARD_BRIGHTNESS_MAX     = 4,
+    AURA_KEYBOARD_BRIGHTNESS_DEFAULT = 4,
 };
 
-typedef struct
+enum
 {
-    const char*         name;
-    unsigned char       idx;
-} aura_keyboard_led;
-
-typedef struct
-{
-    const char*         name;
-    const zone_type     type;
-    const unsigned int  size;
-    matrix_map_type*    matrix;
-} led_zone;
+    AURA_CLAYMORE_SPEED_MIN                     = 254,
+    AURA_CLAYMORE_SPEED_MAX                     = 0,
+    AURA_CLAYMORE_SPEED_DEFAULT_STATIC          = 0,
+    AURA_CLAYMORE_SPEED_DEFAULT_BREATHING       = 107,
+    AURA_CLAYMORE_SPEED_DEFAULT_COLOR_CYCLE     = 121,
+    AURA_CLAYMORE_SPEED_DEFAULT_REACTIVE        = 56,
+    AURA_CLAYMORE_SPEED_DEFAULT_WAVE            = 50,
+    AURA_CLAYMORE_SPEED_DEFAULT_RIPPLE          = 108,
+    AURA_CLAYMORE_SPEED_DEFAULT_STARRY_NIGHT    = 54,
+    AURA_CLAYMORE_SPEED_DEFAULT_QUICKSAND       = 103
+};
 
 class RGBController_AuraKeyboard : public RGBController
 {
 public:
-    RGBController_AuraKeyboard(AuraKeyboardController* controller_ptr, AuraKeyboardMappingLayoutType keyboard_layout);
+    RGBController_AuraKeyboard(AuraKeyboardController* controller_ptr);
     ~RGBController_AuraKeyboard();
 
     void        SetupZones();
@@ -50,8 +48,9 @@ public:
     void        DeviceUpdateSingleLED(int led);
 
     void        DeviceUpdateMode();
+    void        DeviceSaveMode();
 
 private:
-    AuraKeyboardController*         controller;
-    AuraKeyboardMappingLayoutType   layout;
+    AuraKeyboardController*  controller;
+    uint16_t                    pid;
 };

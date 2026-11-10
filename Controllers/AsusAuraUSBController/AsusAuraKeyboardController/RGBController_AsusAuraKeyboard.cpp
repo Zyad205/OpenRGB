@@ -3,377 +3,410 @@
 |                                                           |
 |   RGBController for ASUS Aura keyboard                    |
 |                                                           |
-|   Adam Honse (CalcProgrammer1)                19 Mar 2020 |
+|   Mola19                                      03 Mar 2021 |
 |                                                           |
 |   This file is part of the OpenRGB project                |
 |   SPDX-License-Identifier: GPL-2.0-or-later               |
 \*---------------------------------------------------------*/
 
-#include "RGBControllerKeyNames.h"
+#include <cmath>
+#include <vector>
 #include "RGBController_AsusAuraKeyboard.h"
 
-//0xFFFFFFFF indicates an unused entry in matrix
-#define NA  0xFFFFFFFF
-
-static unsigned int flare_matrix_map[6][22] =
-    { {   0,  NA,  13,  18,  23,  28,  38,  43,  49,  54,  60,  65,  69,  70,  NA,  76,  80,  85,  NA,  NA,  NA,  NA },
-      {   1,   8,  14,  19,  24,  29,  34,  39,  44,  50,  55,  61,  66,  71,  NA,  77,  81,  86,  89,  94,  98, 103 },
-      {   2,  NA,   9,  15,  20,  25,  30,  35,  40,  45,  51,  56,  62,  67,  72,  78,  82,  87,  90,  95,  99, 104 },
-      {   3,  NA,  10,  16,  21,  26,  31,  36,  41,  46,  52,  57,  63,  68,  73,  NA,  NA,  NA,  91,  96, 100,  NA },
-      {   4,   6,  11,  17,  22,  27,  32,  37,  42,  47,  53,  58,  74,  NA,  NA,  NA,  83,  NA,  92,  97, 101, 105 },
-      {   5,   7,  12,  NA,  NA,  NA,  NA,  33,  NA,  48,  NA,  59,  64,  75,  NA,  79,  84,  88,  93,  NA, 102,  NA } };
-
-static unsigned int scope_matrix_map[6][22] =
-    { {   0,  NA,  13,  18,  23,  28,  38,  43,  49,  54,  60,  65,  69,  70,  NA,  76,  80,  85,  NA,  NA,  NA,  NA },
-      {   1,   8,  14,  19,  24,  29,  34,  39,  44,  50,  55,  61,  66,  71,  NA,  77,  81,  86,  89,  94,  98, 103 },
-      {   2,  NA,   9,  15,  20,  25,  30,  35,  40,  45,  51,  56,  62,  67,  72,  78,  82,  87,  90,  95,  99, 104 },
-      {   3,  NA,  10,  16,  21,  26,  31,  36,  41,  46,  52,  57,  63,  68,  73,  NA,  NA,  NA,  91,  96, 100,  NA },
-      {   4,   6,  11,  17,  22,  27,  32,  37,  42,  47,  53,  58,  74,  NA,  NA,  NA,  83,  NA,  92,  97, 101, 105 },
-      {   5,   NA,  7,  12,  NA,  NA,  NA,  33,  NA,  48,  NA,  59,  64,  75,  NA,  79,  84,  88,  93,  NA, 102,  NA } };
-
-static unsigned int scope_tkl_matrix_map[6][18] =
-    { {   0,  NA,  13,  18,  23,  28,  38,  43,  49,  54,  60,  65,  69,  70,  NA,  NA,  NA,  NA },
-      {   1,   8,  14,  19,  24,  29,  34,  39,  44,  50,  55,  61,  66,  71,  NA,  76,  79,  83 },
-      {   2,  NA,   9,  15,  20,  25,  30,  35,  40,  45,  51,  56,  62,  67,  72,  77,  80,  84 },
-      {   3,  NA,  10,  16,  21,  26,  31,  36,  41,  46,  52,  57,  63,  68,  73,  NA,  NA,  NA },
-      {   4,   6,  11,  17,  22,  27,  32,  37,  42,  47,  53,  58,  74,  NA,  NA,  NA,  81,  NA },
-      {   5,   NA,  7,  12,  NA,  NA,  NA,  33,  NA,  48,  NA,  59,  64,  75,  NA,  78,  82,  85 } };
-
-static unsigned int falchion_matrix_map[5][16] =
-    { {   0,   5,   9,  14,  18,  22,  26,  31,  35,  39,  44,  49,  54,  58,  NA,  63 },
-      {   1,  NA,   6,  10,  15,  19,  23,  27,  32,  36,  40,  45,  50,  55,  59,  64 },
-      {   2,  NA,   7,  11,  16,  20,  24,  28,  33,  37,  41,  46,  51,  60,  NA,  65 },
-      {   3,  NA,  12,  17,  21,  25,  29,  34,  38,  42,  47,  52,  56,  NA,  61,  66 },
-      {   4,   8,  13,  NA,  NA,  NA,  30,  NA,  NA,  NA,  43,  48,  53,  57,  62,  67 } };
-
-static const std::vector<aura_keyboard_led> default_led_names =
-{
-    /* Key Label                Index  */
-    { KEY_EN_ESCAPE,            0x00    },
-    { KEY_EN_BACK_TICK,         0x01    },
-    { KEY_EN_TAB,               0x02    },
-    { KEY_EN_CAPS_LOCK,         0x03    },
-    { KEY_EN_LEFT_SHIFT,        0x04    },
-    { KEY_EN_LEFT_CONTROL,      0x05    },
-    { KEY_EN_ISO_BACK_SLASH,    0x0C    },
-    { KEY_EN_1,                 0x11    },
-    { KEY_EN_Q,                 0x12    },
-    { KEY_EN_A,                 0x13    },
-    { KEY_EN_Z,                 0x14    },
-    { KEY_EN_F1,                0x18    },
-    { KEY_EN_2,                 0x19    },
-    { KEY_EN_W,                 0x1A    },
-    { KEY_EN_S,                 0x1B    },
-    { KEY_EN_X,                 0x1C    },
-    { KEY_EN_F2,                0x20    },
-    { KEY_EN_3,                 0x21    },
-    { KEY_EN_E,                 0x22    },
-    { KEY_EN_D,                 0x23    },
-    { KEY_EN_C,                 0x24    },
-    { KEY_EN_F3,                0x28    },
-    { KEY_EN_4,                 0x29    },
-    { KEY_EN_R,                 0x2A    },
-    { KEY_EN_F,                 0x2B    },
-    { KEY_EN_V,                 0x2C    },
-    { KEY_EN_F4,                0x30    },
-    { KEY_EN_5,                 0x31    },
-    { KEY_EN_T,                 0x32    },
-    { KEY_EN_G,                 0x33    },
-    { KEY_EN_B,                 0x34    },
-    { KEY_EN_SPACE,             0x35    },
-    { KEY_EN_6,                 0x39    },
-    { KEY_EN_Y,                 0x3A    },
-    { KEY_EN_H,                 0x3B    },
-    { KEY_EN_N,                 0x3C    },
-    { KEY_EN_F5,                0x40    },
-    { KEY_EN_7,                 0x41    },
-    { KEY_EN_U,                 0x42    },
-    { KEY_EN_J,                 0x43    },
-    { KEY_EN_M,                 0x44    },
-    { KEY_EN_F6,                0x48    },
-    { KEY_EN_8,                 0x49    },
-    { KEY_EN_I,                 0x4A    },
-    { KEY_EN_K,                 0x4B    },
-    { KEY_EN_COMMA,             0x4C    },
-    { KEY_EN_RIGHT_ALT,         0x4D    },
-    { KEY_EN_F7,                0x50    },
-    { KEY_EN_9,                 0x51    },
-    { KEY_EN_O,                 0x52    },
-    { KEY_EN_L,                 0x53    },
-    { KEY_EN_PERIOD,            0x54    },
-    { KEY_EN_F8,                0x58    },
-    { KEY_EN_0,                 0x59    },
-    { KEY_EN_P,                 0x5A    },
-    { KEY_EN_SEMICOLON,         0x5B    },
-    { KEY_EN_FORWARD_SLASH,     0x5C    },
-    { KEY_EN_RIGHT_FUNCTION,    0x5D    },
-    { KEY_EN_F9,                0x60    },
-    { KEY_EN_MINUS,             0x61    },
-    { KEY_EN_LEFT_BRACKET,      0x62    },
-    { KEY_EN_QUOTE,             0x63    },
-    { KEY_EN_MENU,              0x65    },
-    { KEY_EN_F10,               0x68    },
-    { KEY_EN_EQUALS,            0x69    },
-    { KEY_EN_RIGHT_BRACKET,     0x6A    },
-    { KEY_EN_POUND,             0x6B    },
-    { KEY_EN_F11,               0x70    },
-    { KEY_EN_F12,               0x78    },
-    { KEY_EN_BACKSPACE,         0x79    },
-    { KEY_EN_ANSI_BACK_SLASH,   0x7A    },
-    { KEY_EN_ANSI_ENTER,        0x7B    },
-    { KEY_EN_RIGHT_SHIFT,       0x7C    },
-    { KEY_EN_RIGHT_CONTROL,     0x7D    },
-    { KEY_EN_PRINT_SCREEN,      0x80    },
-    { KEY_EN_INSERT,            0x81    },
-    { KEY_EN_DELETE,            0x82    },
-    { KEY_EN_LEFT_ARROW,        0x85    },
-    { KEY_EN_SCROLL_LOCK,       0x88    },
-    { KEY_EN_HOME,              0x89    },
-    { KEY_EN_END,               0x8A    },
-    { KEY_EN_UP_ARROW,          0x8C    },
-    { KEY_EN_DOWN_ARROW,        0x8D    },
-    { KEY_EN_PAUSE_BREAK,       0x90    },
-    { KEY_EN_PAGE_UP,           0x91    },
-    { KEY_EN_PAGE_DOWN,         0x92    },
-    { KEY_EN_RIGHT_ARROW,       0x95    },
-    { KEY_EN_NUMPAD_LOCK,       0x99    },
-    { KEY_EN_NUMPAD_7,          0x9A    },
-    { KEY_EN_NUMPAD_4,          0x9B    },
-    { KEY_EN_NUMPAD_1,          0x9C    },
-    { KEY_EN_NUMPAD_0,          0x9D    },
-    { KEY_EN_NUMPAD_DIVIDE,     0xA1    },
-    { KEY_EN_NUMPAD_8,          0xA2    },
-    { KEY_EN_NUMPAD_5,          0xA3    },
-    { KEY_EN_NUMPAD_2,          0xA4    },
-    { KEY_EN_NUMPAD_TIMES,      0xA9    },
-    { KEY_EN_NUMPAD_9,          0xAA    },
-    { KEY_EN_NUMPAD_6,          0xAB    },
-    { KEY_EN_NUMPAD_3,          0xAC    },
-    { KEY_EN_NUMPAD_PERIOD,     0xAD    },
-    { KEY_EN_NUMPAD_MINUS,      0xB1    },
-    { KEY_EN_NUMPAD_PLUS,       0xB2    },
-    { KEY_EN_NUMPAD_ENTER,      0xB4    },
-};
-
-static const std::vector<aura_keyboard_led> default_tkl_led_names =
-{
-    /* Key Label                Index  */
-    { KEY_EN_ESCAPE,            0x00    },
-    { KEY_EN_BACK_TICK,         0x01    },
-    { KEY_EN_TAB,               0x02    },
-    { KEY_EN_CAPS_LOCK,         0x03    },
-    { KEY_EN_LEFT_SHIFT,        0x04    },
-    { KEY_EN_LEFT_CONTROL,      0x05    },
-    { KEY_EN_ISO_BACK_SLASH,    0x0C    },
-    { KEY_EN_1,                 0x11    },
-    { KEY_EN_Q,                 0x12    },
-    { KEY_EN_A,                 0x13    },
-    { KEY_EN_Z,                 0x14    },
-    { KEY_EN_F1,                0x18    },
-    { KEY_EN_2,                 0x19    },
-    { KEY_EN_W,                 0x1A    },
-    { KEY_EN_S,                 0x1B    },
-    { KEY_EN_X,                 0x1C    },
-    { KEY_EN_F2,                0x20    },
-    { KEY_EN_3,                 0x21    },
-    { KEY_EN_E,                 0x22    },
-    { KEY_EN_D,                 0x23    },
-    { KEY_EN_C,                 0x24    },
-    { KEY_EN_F3,                0x28    },
-    { KEY_EN_4,                 0x29    },
-    { KEY_EN_R,                 0x2A    },
-    { KEY_EN_F,                 0x2B    },
-    { KEY_EN_V,                 0x2C    },
-    { KEY_EN_F4,                0x30    },
-    { KEY_EN_5,                 0x31    },
-    { KEY_EN_T,                 0x32    },
-    { KEY_EN_G,                 0x33    },
-    { KEY_EN_B,                 0x34    },
-    { KEY_EN_SPACE,             0x35    },
-    { KEY_EN_6,                 0x39    },
-    { KEY_EN_Y,                 0x3A    },
-    { KEY_EN_H,                 0x3B    },
-    { KEY_EN_N,                 0x3C    },
-    { KEY_EN_F5,                0x40    },
-    { KEY_EN_7,                 0x41    },
-    { KEY_EN_U,                 0x42    },
-    { KEY_EN_J,                 0x43    },
-    { KEY_EN_M,                 0x44    },
-    { KEY_EN_F6,                0x48    },
-    { KEY_EN_8,                 0x49    },
-    { KEY_EN_I,                 0x4A    },
-    { KEY_EN_K,                 0x4B    },
-    { KEY_EN_COMMA,             0x4C    },
-    { KEY_EN_RIGHT_ALT,         0x4D    },
-    { KEY_EN_F7,                0x50    },
-    { KEY_EN_9,                 0x51    },
-    { KEY_EN_O,                 0x52    },
-    { KEY_EN_L,                 0x53    },
-    { KEY_EN_PERIOD,            0x54    },
-    { KEY_EN_F8,                0x58    },
-    { KEY_EN_0,                 0x59    },
-    { KEY_EN_P,                 0x5A    },
-    { KEY_EN_SEMICOLON,         0x5B    },
-    { KEY_EN_FORWARD_SLASH,     0x5C    },
-    { KEY_EN_RIGHT_FUNCTION,    0x5D    },
-    { KEY_EN_F9,                0x60    },
-    { KEY_EN_MINUS,             0x61    },
-    { KEY_EN_LEFT_BRACKET,      0x62    },
-    { KEY_EN_QUOTE,             0x63    },
-    { KEY_EN_MENU,              0x65    },
-    { KEY_EN_F10,               0x68    },
-    { KEY_EN_EQUALS,            0x69    },
-    { KEY_EN_RIGHT_BRACKET,     0x6A    },
-    { KEY_EN_POUND,             0x6B    },
-    { KEY_EN_F11,               0x70    },
-    { KEY_EN_F12,               0x78    },
-    { KEY_EN_BACKSPACE,         0x79    },
-    { KEY_EN_ANSI_BACK_SLASH,   0x7A    },
-    { KEY_EN_ANSI_ENTER,        0x7B    },
-    { KEY_EN_RIGHT_SHIFT,       0x7C    },
-    { KEY_EN_RIGHT_CONTROL,     0x7D    },
-    { KEY_EN_INSERT,            0x81    },
-    { KEY_EN_DELETE,            0x82    },
-    { KEY_EN_LEFT_ARROW,        0x85    },
-    { KEY_EN_HOME,              0x89    },
-    { KEY_EN_END,               0x8A    },
-    { KEY_EN_UP_ARROW,          0x8C    },
-    { KEY_EN_DOWN_ARROW,        0x8D    },
-    { KEY_EN_PAGE_UP,           0x91    },
-    { KEY_EN_PAGE_DOWN,         0x92    },
-    { KEY_EN_RIGHT_ARROW,       0x95    },
-    { "Logo 1",                 0x80    },
-    { "Logo 2",                 0x90    },
-    { "Underglow 1",            0x06    },
-    { "Underglow 2",            0x0E    },
-    { "Underglow 3",            0x16    },
-    { "Underglow 4",            0x1E    },
-    { "Underglow 5",            0x26    },
-    { "Underglow 6",            0x2E    },
-    { "Underglow 7",            0x36    },
-    { "Underglow 8",            0x3E    },
-    { "Underglow 9",            0x46    },
-    { "Underglow 10",           0x4E    },
-    { "Underglow 11",           0x56    },
-    { "Underglow 12",           0x5E    },
-    { "Underglow 13",           0x66    },
-    { "Underglow 14",           0x6E    },
-    { "Underglow 15",           0x76    },
-    { "Underglow 16",           0x7E    },
-    { "Underglow 17",           0x86    },
-    { "Underglow 18",           0x8E    },
-    { "Underglow 19",           0x96    },
-    { "Underglow 20",           0x9E    },
-    { "Underglow 21",           0xA6    },
-    { "Underglow 22",           0xAE    },
-    { "Underglow 23",           0xB6    },
-    { "Underglow 24",           0xBE    },
-    { "Underglow 25",           0xC6    },
-    { "Underglow 26",           0xCE    },
-};
-
-static const std::vector<aura_keyboard_led> default_65pct_led_names =
-{
-    /* Key Label                Index  */
-    { KEY_EN_ESCAPE,            0x00    },
-    { KEY_EN_TAB,               0x01    },
-    { KEY_EN_CAPS_LOCK,         0x02    },
-    { KEY_EN_LEFT_SHIFT,        0x03    },
-    { KEY_EN_LEFT_CONTROL,      0x04    },
-    { KEY_EN_1,                 0x08    },
-    { KEY_EN_Q,                 0x09    },
-    { KEY_EN_A,                 0x0A    },
-    { KEY_EN_LEFT_WINDOWS,      0x0C    },
-    { KEY_EN_2,                 0x10    },
-    { KEY_EN_W,                 0x11    },
-    { KEY_EN_S,                 0x12    },
-    { KEY_EN_Z,                 0x13    },
-    { KEY_EN_LEFT_ALT,          0x14    },
-    { KEY_EN_3,                 0x18    },
-    { KEY_EN_E,                 0x19    },
-    { KEY_EN_D,                 0x1A    },
-    { KEY_EN_X,                 0x1B    },
-    { KEY_EN_4,                 0x20    },
-    { KEY_EN_R,                 0x21    },
-    { KEY_EN_F,                 0x22    },
-    { KEY_EN_C,                 0x23    },
-    { KEY_EN_5,                 0x28    },
-    { KEY_EN_T,                 0x29    },
-    { KEY_EN_G,                 0x2A    },
-    { KEY_EN_V,                 0x2B    },
-    { KEY_EN_6,                 0x30    },
-    { KEY_EN_Y,                 0x31    },
-    { KEY_EN_H,                 0x32    },
-    { KEY_EN_B,                 0x33    },
-    { KEY_EN_SPACE,             0x34    },
-    { KEY_EN_7,                 0x38    },
-    { KEY_EN_U,                 0x39    },
-    { KEY_EN_J,                 0x3A    },
-    { KEY_EN_N,                 0x3B    },
-    { KEY_EN_8,                 0x40    },
-    { KEY_EN_I,                 0x41    },
-    { KEY_EN_K,                 0x42    },
-    { KEY_EN_M,                 0x43    },
-    { KEY_EN_9,                 0x48    },
-    { KEY_EN_O,                 0x49    },
-    { KEY_EN_L,                 0x4A    },
-    { KEY_EN_COMMA,             0x4B    },
-    { KEY_EN_RIGHT_ALT,         0x4C    },
-    { KEY_EN_0,                 0x50    },
-    { KEY_EN_P,                 0x51    },
-    { KEY_EN_SEMICOLON,         0x52    },
-    { KEY_EN_PERIOD,            0x53    },
-    { KEY_EN_RIGHT_FUNCTION,    0x54    },
-    { KEY_EN_MINUS,             0x58    },
-    { KEY_EN_LEFT_BRACKET,      0x59    },
-    { KEY_EN_QUOTE,             0x5A    },
-    { KEY_EN_FORWARD_SLASH,     0x5B    },
-    { KEY_EN_RIGHT_CONTROL,     0x5C    },
-    { KEY_EN_EQUALS,            0x60    },
-    { KEY_EN_RIGHT_BRACKET,     0x61    },
-    { KEY_EN_RIGHT_SHIFT,       0x63    },
-    { KEY_EN_LEFT_ARROW,        0x64    },
-    { KEY_EN_BACKSPACE,         0x68    },
-    { KEY_EN_ANSI_BACK_SLASH,   0x69    },
-    { KEY_EN_ANSI_ENTER,        0x6A    },
-    { KEY_EN_UP_ARROW,          0x6B    },
-    { KEY_EN_DOWN_ARROW,        0x6C    },
-    { KEY_EN_INSERT,            0x70    },
-    { KEY_EN_DELETE,            0x71    },
-    { KEY_EN_PAGE_UP,           0x72    },
-    { KEY_EN_PAGE_DOWN,         0x73    },
-    { KEY_EN_RIGHT_ARROW,       0x74    },
-};
-
 /**------------------------------------------------------------------*\
-    @name Asus Aura Keyboard
+    @name Asus Aura TUF Keyboard
     @category Keyboard
     @type USB
-    @save :x:
+    @save :white_check_mark:
     @direct :white_check_mark:
-    @effects :x:
-    @detectors DetectAsusAuraUSBKeyboards
+    @effects :white_check_mark:
+    @detectors DetectAsusAuraUSBKeyboard
     @comment
 \*-------------------------------------------------------------------*/
 
-RGBController_AuraKeyboard::RGBController_AuraKeyboard(AuraKeyboardController* controller_ptr, AuraKeyboardMappingLayoutType keyboard_layout)
+RGBController_AuraKeyboard::RGBController_AuraKeyboard(AuraKeyboardController* controller_ptr)
 {
-    controller          = controller_ptr;
-    layout              = keyboard_layout;
+    controller                          = controller_ptr;
 
-    name                = controller->GetNameString();
-    vendor              = "ASUS";
-    type                = DEVICE_TYPE_KEYBOARD;
-    description         = "ASUS Aura Keyboard Device";
-    location            = controller->GetDeviceLocation();
-    serial              = controller->GetSerialString();
+    pid                                 = controller->device_pid;
 
-    mode Direct;
-    Direct.name         = "Direct";
-    Direct.value        = 0;
-    Direct.flags        = MODE_FLAG_HAS_PER_LED_COLOR;
-    Direct.color_mode   = MODE_COLORS_PER_LED;
-    modes.push_back(Direct);
+    if(pid != AURA_ROG_CLAYMORE_PID)
+    {
+        name                            = controller->GetName();
+        vendor                          = "ASUS";
+        type                            = DEVICE_TYPE_KEYBOARD;
+        description                     = "ASUS Aura Keyboard Device";
+        version                         = controller->GetVersion();
+        location                        = controller->GetDeviceLocation();
+        serial                          = controller->GetSerialString();
+
+        unsigned char AURA_KEYBOARD_SPEED_MIN     = 0;
+        unsigned char AURA_KEYBOARD_SPEED_MAX     = 0;
+        unsigned char AURA_KEYBOARD_SPEED_DEFAULT = 0;
+
+        switch(pid)
+        {
+            case AURA_TUF_K1_GAMING_PID:
+                AURA_KEYBOARD_SPEED_MIN          = 0;
+                AURA_KEYBOARD_SPEED_MAX          = 2;
+                AURA_KEYBOARD_SPEED_DEFAULT      = 1;
+                break;
+
+            case AURA_ROG_STRIX_FLARE_PID:
+            case AURA_ROG_STRIX_FLARE_PNK_LTD_PID:
+            case AURA_ROG_STRIX_FLARE_COD_BO4_PID:
+            case AURA_TUF_K3_GAMING_PID:
+            case AURA_TUF_K7_GAMING_PID:
+            case AURA_TUF_K3_GENII_MIKU_EDITION_PID:
+                AURA_KEYBOARD_SPEED_MIN          = 15;
+                AURA_KEYBOARD_SPEED_MAX          = 0;
+                AURA_KEYBOARD_SPEED_DEFAULT      = 8;
+                break;
+
+            case AURA_ROG_AZOTH_USB_PID:
+            case AURA_ROG_AZOTH_2_4_PID:
+            case AURA_ROG_FALCHION_WIRED_PID:
+            case AURA_ROG_FALCHION_WIRELESS_PID:
+            case AURA_ROG_STRIX_FLARE_II_PID:
+            case AURA_ROG_STRIX_FLARE_II_ANIMATE_PID:
+            case AURA_ROG_STRIX_SCOPE_RX_PID:
+            case AURA_ROG_STRIX_SCOPE_RX_EVA_02_PID:
+            case AURA_ROG_STRIX_SCOPE_PID:
+            case AURA_ROG_STRIX_SCOPE_TKL_PID:
+            case AURA_ROG_STRIX_SCOPE_TKL_PNK_LTD_PID:
+            case AURA_ROG_STRIX_SCOPE_RX_TKL_DELUXE_PID:
+            case AURA_ROG_STRIX_SCOPE_NX_WIRELESS_DELUXE_2_4_PID:
+            case AURA_ROG_STRIX_SCOPE_NX_WIRELESS_DELUXE_USB_PID:
+            case AURA_ROG_STRIX_SCOPE_II_PID:
+            case AURA_ROG_STRIX_SCOPE_II_RX_PID:
+            case AURA_ROG_STRIX_SCOPE_II_96_WIRELESS_USB_PID:
+            case AURA_ROG_STRIX_SCOPE_II_96_RX_WIRELESS_USB_PID:
+            case AURA_TUF_K5_GAMING_PID:
+                AURA_KEYBOARD_SPEED_MIN          = 255;
+                AURA_KEYBOARD_SPEED_MAX          = 0;
+                AURA_KEYBOARD_SPEED_DEFAULT      = 30;
+                break;
+
+            default:
+                AURA_KEYBOARD_SPEED_MIN          = 15;
+                AURA_KEYBOARD_SPEED_MAX          = 0;
+                AURA_KEYBOARD_SPEED_DEFAULT      = 8;
+                break;
+        }
+
+        mode Direct;
+        Direct.name                     = "Direct";
+        Direct.value                    = AURA_KEYBOARD_MODE_DIRECT;
+        Direct.flags                    = MODE_FLAG_HAS_PER_LED_COLOR;
+        Direct.color_mode               = MODE_COLORS_PER_LED;
+        modes.push_back(Direct);
+
+        mode Static;
+        Static.name                     = "Static";
+        Static.value                    = AURA_KEYBOARD_MODE_STATIC;
+        Static.flags                    = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+        Static.brightness_min           = AURA_KEYBOARD_BRIGHTNESS_MIN;
+        Static.brightness_max           = AURA_KEYBOARD_BRIGHTNESS_MAX;
+        Static.brightness               = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+        Static.color_mode               = MODE_COLORS_MODE_SPECIFIC;
+        Static.colors_min               = 1;
+        Static.colors_max               = 1;
+        Static.colors.resize(1);
+        modes.push_back(Static);
+
+        mode Breathing;
+        Breathing.name                  = "Breathing";
+        Breathing.value                 = AURA_KEYBOARD_MODE_BREATHING;
+        Breathing.flags                 = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+        if(controller->is_per_led_keyboard)
+        {
+            Breathing.flags            |= MODE_FLAG_HAS_RANDOM_COLOR;
+        }
+        Breathing.speed_min             = AURA_KEYBOARD_SPEED_MIN;
+        Breathing.speed_max             = AURA_KEYBOARD_SPEED_MAX;
+        Breathing.speed                 = AURA_KEYBOARD_SPEED_DEFAULT;
+        Breathing.brightness_min        = AURA_KEYBOARD_BRIGHTNESS_MIN;
+        Breathing.brightness_max        = AURA_KEYBOARD_BRIGHTNESS_MAX;
+        Breathing.brightness            = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+        Breathing.color_mode            = MODE_COLORS_MODE_SPECIFIC;
+        Breathing.colors_min            = 1;
+        Breathing.colors_max            = 2;
+        Breathing.colors.resize(1);
+        modes.push_back(Breathing);
+
+        mode Color_Cycle;
+        Color_Cycle.name                = "Spectrum Cycle";
+        Color_Cycle.value               = AURA_KEYBOARD_MODE_COLOR_CYCLE;
+        Color_Cycle.flags               = MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+        Color_Cycle.speed_min           = AURA_KEYBOARD_SPEED_MIN;
+        Color_Cycle.speed_max           = AURA_KEYBOARD_SPEED_MAX;
+        Color_Cycle.speed               = AURA_KEYBOARD_SPEED_DEFAULT;
+        Color_Cycle.brightness_min      = AURA_KEYBOARD_BRIGHTNESS_MIN;
+        Color_Cycle.brightness_max      = AURA_KEYBOARD_BRIGHTNESS_MAX;
+        Color_Cycle.brightness          = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+        Color_Cycle.color_mode          = MODE_COLORS_NONE;
+        modes.push_back(Color_Cycle);
+
+        mode Wave;
+        Wave.name                       = "Rainbow Wave";
+        Wave.value                      = AURA_KEYBOARD_MODE_WAVE;
+        Wave.flags                      = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_DIRECTION_LR | MODE_FLAG_HAS_DIRECTION_HV | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+        if(controller->is_per_led_keyboard)
+        {
+            Wave.flags                 |= MODE_FLAG_HAS_DIRECTION_UD;
+        }
+        Wave.speed_min                  = AURA_KEYBOARD_SPEED_MIN;
+        Wave.speed_max                  = AURA_KEYBOARD_SPEED_MAX;
+        Wave.speed                      = AURA_KEYBOARD_SPEED_DEFAULT;
+        Wave.brightness_min             = AURA_KEYBOARD_BRIGHTNESS_MIN;
+        Wave.brightness_max             = AURA_KEYBOARD_BRIGHTNESS_MAX;
+        Wave.brightness                 = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+        Wave.direction                  = MODE_DIRECTION_LEFT;
+        Wave.color_mode                 = MODE_COLORS_MODE_SPECIFIC;
+
+        if(!controller->is_per_led_keyboard)
+        {
+            Wave.colors_min             = 5;
+            Wave.colors_max             = 5;
+        }
+        else
+        {
+            Wave.colors_min             = 1;
+            Wave.colors_max             = 7;
+        }
+
+        Wave.colors.resize(Wave.colors_max);
+        modes.push_back(Wave);
+
+        if(controller->is_per_led_keyboard)
+        {
+            mode Reactive;
+            Reactive.name               = "Reactive";
+            Reactive.value              = AURA_KEYBOARD_MODE_REACTIVE;
+            Reactive.flags              = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+            Reactive.speed_min          = AURA_KEYBOARD_SPEED_MIN;
+            Reactive.speed_max          = AURA_KEYBOARD_SPEED_MAX;
+            Reactive.speed              = AURA_KEYBOARD_SPEED_DEFAULT;
+            Reactive.brightness_min     = AURA_KEYBOARD_BRIGHTNESS_MIN;
+            Reactive.brightness_max     = AURA_KEYBOARD_BRIGHTNESS_MAX;
+            Reactive.brightness         = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+            Reactive.color_mode         = MODE_COLORS_MODE_SPECIFIC;
+            Reactive.colors_min         = 1;
+            Reactive.colors_max         = 2;
+            Reactive.colors.resize(1);
+            modes.push_back(Reactive);
+
+            mode Ripple;
+            Ripple.name                 = "Ripple";
+            Ripple.value                = AURA_KEYBOARD_MODE_RIPPLE;
+            Ripple.flags                = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+            Ripple.speed_min            = AURA_KEYBOARD_SPEED_MIN;
+            Ripple.speed_max            = AURA_KEYBOARD_SPEED_MAX;
+            Ripple.speed                = AURA_KEYBOARD_SPEED_DEFAULT;
+            Ripple.brightness_min       = AURA_KEYBOARD_BRIGHTNESS_MIN;
+            Ripple.brightness_max       = AURA_KEYBOARD_BRIGHTNESS_MAX;
+            Ripple.brightness           = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+            Ripple.color_mode           = MODE_COLORS_MODE_SPECIFIC;
+            Ripple.colors_min           = 1;
+            Ripple.colors_max           = 8;
+            Ripple.colors.resize(7);
+            modes.push_back(Ripple);
+
+            mode Starry_Night;
+            Starry_Night.name           = "Starry Night";
+            Starry_Night.value          = AURA_KEYBOARD_MODE_STARRY_NIGHT;
+            Starry_Night.flags          = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+            Starry_Night.speed_min      = AURA_KEYBOARD_SPEED_MIN;
+            Starry_Night.speed_max      = AURA_KEYBOARD_SPEED_MAX;
+            Starry_Night.speed          = AURA_KEYBOARD_SPEED_DEFAULT;
+            Starry_Night.brightness_min = AURA_KEYBOARD_BRIGHTNESS_MIN;
+            Starry_Night.brightness_max = AURA_KEYBOARD_BRIGHTNESS_MAX;
+            Starry_Night.brightness     = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+            Starry_Night.color_mode     = MODE_COLORS_MODE_SPECIFIC;
+            Starry_Night.colors_min     = 1;
+            Starry_Night.colors_max     = 3;
+            Starry_Night.colors.resize(1);
+            modes.push_back(Starry_Night);
+
+            mode Quicksand;
+            Quicksand.name              = "Quicksand";
+            Quicksand.value             = AURA_KEYBOARD_MODE_QUICKSAND;
+            Quicksand.flags             = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_DIRECTION_UD | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+            Quicksand.direction         = MODE_DIRECTION_DOWN;
+            Quicksand.speed_min         = AURA_KEYBOARD_SPEED_MIN;
+            Quicksand.speed_max         = AURA_KEYBOARD_SPEED_MAX;
+            Quicksand.speed             = AURA_KEYBOARD_SPEED_DEFAULT;
+            Quicksand.brightness_min    = AURA_KEYBOARD_BRIGHTNESS_MIN;
+            Quicksand.brightness_max    = AURA_KEYBOARD_BRIGHTNESS_MAX;
+            Quicksand.brightness        = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+            Quicksand.color_mode        = MODE_COLORS_MODE_SPECIFIC;
+            Quicksand.colors_min        = 6;
+            Quicksand.colors_max        = 6;
+            Quicksand.colors.resize(6);
+            modes.push_back(Quicksand);
+
+            mode Current;
+            Current.name                = "Current";
+            Current.value               = AURA_KEYBOARD_MODE_CURRENT;
+            Current.flags               = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+            Current.speed_min           = AURA_KEYBOARD_SPEED_MIN;
+            Current.speed_max           = AURA_KEYBOARD_SPEED_MAX;
+            Current.speed               = AURA_KEYBOARD_SPEED_DEFAULT;
+            Current.brightness_min      = AURA_KEYBOARD_BRIGHTNESS_MIN;
+            Current.brightness_max      = AURA_KEYBOARD_BRIGHTNESS_MAX;
+            Current.brightness          = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+            Current.color_mode          = MODE_COLORS_MODE_SPECIFIC;
+            Current.colors_min          = 1;
+            Current.colors_max          = 3;
+            Current.colors.resize(1);
+            modes.push_back(Current);
+
+            mode Rain_Drop;
+            Rain_Drop.name              = "Rain Drop";
+            Rain_Drop.value             = AURA_KEYBOARD_MODE_RAIN_DROP;
+            Rain_Drop.flags             = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_MANUAL_SAVE | MODE_FLAG_HAS_BRIGHTNESS;
+            Rain_Drop.speed_min         = AURA_KEYBOARD_SPEED_MIN;
+            Rain_Drop.speed_max         = AURA_KEYBOARD_SPEED_MAX;
+            Rain_Drop.speed             = AURA_KEYBOARD_SPEED_DEFAULT;
+            Rain_Drop.brightness_min    = AURA_KEYBOARD_BRIGHTNESS_MIN;
+            Rain_Drop.brightness_max    = AURA_KEYBOARD_BRIGHTNESS_MAX;
+            Rain_Drop.brightness        = AURA_KEYBOARD_BRIGHTNESS_DEFAULT;
+            Rain_Drop.color_mode        = MODE_COLORS_MODE_SPECIFIC;
+            Rain_Drop.colors_min        = 1;
+            Rain_Drop.colors_max        = 3;
+            Rain_Drop.colors.resize(1);
+            modes.push_back(Rain_Drop);
+        }
+    }
+    else
+    {
+
+        name                            = controller->GetName();
+        vendor                          = "ASUS";
+        type                            = DEVICE_TYPE_KEYBOARD;
+        description                     = "ASUS Aura Keyboard Device";
+        version                         = controller->GetVersion();
+        location                        = controller->GetDeviceLocation();
+        serial                          = controller->GetSerialString();
+
+        mode Direct;
+        Direct.name                     = "Direct";
+        Direct.value                    = AURA_KEYBOARD_MODE_DIRECT;
+        Direct.flags                    = MODE_FLAG_HAS_PER_LED_COLOR;
+        Direct.color_mode               = MODE_COLORS_PER_LED;
+        modes.push_back(Direct);
+
+        mode Static;
+        Static.name                     = "Static";
+        Static.value                    = AURA_KEYBOARD_MODE_STATIC;
+        Static.flags                    = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_AUTOMATIC_SAVE;
+        Static.color_mode               = MODE_COLORS_MODE_SPECIFIC;
+        Static.colors_min               = 1;
+        Static.colors_max               = 1;
+        Static.colors.resize(1);
+        modes.push_back(Static);
+
+        mode Breathing;
+        Breathing.name                  = "Breathing";
+        Breathing.value                 = AURA_KEYBOARD_MODE_BREATHING;
+        Breathing.flags                 = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_AUTOMATIC_SAVE;
+        Breathing.speed_min             = AURA_CLAYMORE_SPEED_MIN;
+        Breathing.speed_max             = AURA_CLAYMORE_SPEED_MAX;
+        Breathing.speed                 = AURA_CLAYMORE_SPEED_DEFAULT_BREATHING;
+        Breathing.color_mode            = MODE_COLORS_MODE_SPECIFIC;
+        Breathing.colors_min            = 1;
+        Breathing.colors_max            = 2;
+        Breathing.colors.resize(2);
+        modes.push_back(Breathing);
+
+        mode Color_Cycle;
+        Color_Cycle.name                = "Spectrum Cycle";
+        Color_Cycle.value               = AURA_KEYBOARD_MODE_COLOR_CYCLE;
+        Color_Cycle.flags               = MODE_FLAG_HAS_SPEED | MODE_FLAG_AUTOMATIC_SAVE;
+        Color_Cycle.speed_min           = AURA_CLAYMORE_SPEED_MIN;
+        Color_Cycle.speed_max           = AURA_CLAYMORE_SPEED_MAX;
+        Color_Cycle.speed               = AURA_CLAYMORE_SPEED_DEFAULT_COLOR_CYCLE;
+        Color_Cycle.color_mode          = MODE_COLORS_NONE;
+        modes.push_back(Color_Cycle);
+
+        mode Reactive;
+        Reactive.name                   = "Reactive";
+        Reactive.value                  = AURA_KEYBOARD_MODE_REACTIVE;
+        Reactive.flags                  = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_AUTOMATIC_SAVE;
+        Reactive.speed_min              = AURA_CLAYMORE_SPEED_MIN;
+        Reactive.speed_max              = AURA_CLAYMORE_SPEED_MAX;
+        Reactive.speed                  = AURA_CLAYMORE_SPEED_DEFAULT_REACTIVE;
+        Reactive.color_mode             = MODE_COLORS_MODE_SPECIFIC;
+        Reactive.colors_min             = 1;
+        Reactive.colors_max             = 2;
+        Reactive.colors.resize(2);
+        modes.push_back(Reactive);
+
+        mode Wave;
+        Wave.name                       = "Rainbow Wave";
+        Wave.value                      = AURA_KEYBOARD_MODE_WAVE;
+        Wave.flags                      = MODE_COLORS_NONE | MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_DIRECTION_LR | MODE_FLAG_HAS_DIRECTION_UD | MODE_FLAG_AUTOMATIC_SAVE;
+        Wave.speed_min                  = AURA_CLAYMORE_SPEED_MIN;
+        Wave.speed_max                  = AURA_CLAYMORE_SPEED_MAX;
+        Wave.speed                      = AURA_CLAYMORE_SPEED_DEFAULT_WAVE;
+        Wave.direction                  = MODE_DIRECTION_LEFT;
+        Wave.color_mode                 = MODE_COLORS_NONE;
+        modes.push_back(Wave);
+
+        mode Color_Wave;
+        Color_Wave.name                 = "Color Wave";
+        Color_Wave.value                = AURA_KEYBOARD_MODE_WAVE;
+        Color_Wave.flags                = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_DIRECTION_LR | MODE_FLAG_HAS_DIRECTION_UD | MODE_FLAG_AUTOMATIC_SAVE;
+        Color_Wave.speed_min            = AURA_CLAYMORE_SPEED_MIN;
+        Color_Wave.speed_max            = AURA_CLAYMORE_SPEED_MAX;
+        Color_Wave.speed                = AURA_CLAYMORE_SPEED_DEFAULT_WAVE;
+        Color_Wave.direction            = MODE_DIRECTION_LEFT;
+        Color_Wave.color_mode           = MODE_COLORS_MODE_SPECIFIC;
+        Color_Wave.colors_min           = 1;
+        Color_Wave.colors_max           = 2;
+        Color_Wave.colors.resize(2);
+        modes.push_back(Color_Wave);
+
+        mode Ripple;
+        Ripple.name                     = "Ripple";
+        Ripple.value                    = AURA_KEYBOARD_MODE_RIPPLE;
+        Ripple.flags                    = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_AUTOMATIC_SAVE;
+        Ripple.speed_min                = AURA_CLAYMORE_SPEED_MIN;
+        Ripple.speed_max                = AURA_CLAYMORE_SPEED_MAX;
+        Ripple.speed                    = AURA_CLAYMORE_SPEED_DEFAULT_RIPPLE;
+        Ripple.color_mode               = MODE_COLORS_MODE_SPECIFIC;
+        Ripple.colors_min               = 1;
+        Ripple.colors_max               = 2;
+        Ripple.colors.resize(2);
+        modes.push_back(Ripple);
+
+        mode Starry_Night;
+        Starry_Night.name               = "Starry Night";
+        Starry_Night.value              = AURA_KEYBOARD_MODE_STARRY_NIGHT;
+        Starry_Night.flags              = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_AUTOMATIC_SAVE;
+        Starry_Night.speed_min          = AURA_CLAYMORE_SPEED_MIN;
+        Starry_Night.speed_max          = AURA_CLAYMORE_SPEED_MAX;
+        Starry_Night.speed              = AURA_CLAYMORE_SPEED_DEFAULT_STARRY_NIGHT;
+        Starry_Night.color_mode         = MODE_COLORS_MODE_SPECIFIC;
+        Starry_Night.colors_min         = 1;
+        Starry_Night.colors_max         = 2;
+        Starry_Night.colors.resize(2);
+        modes.push_back(Starry_Night);
+
+        mode Quicksand;
+        Quicksand.name                  = "Quicksand";
+        Quicksand.value                 = AURA_KEYBOARD_MODE_QUICKSAND;
+        Quicksand.flags                 = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_RANDOM_COLOR | MODE_FLAG_HAS_SPEED | MODE_FLAG_AUTOMATIC_SAVE;
+        Quicksand.direction             = MODE_DIRECTION_DOWN;
+        Quicksand.speed_min             = AURA_CLAYMORE_SPEED_MIN;
+        Quicksand.speed_max             = AURA_CLAYMORE_SPEED_MAX;
+        Quicksand.speed                 = AURA_CLAYMORE_SPEED_DEFAULT_QUICKSAND;
+        Quicksand.color_mode            = MODE_COLORS_MODE_SPECIFIC;
+        Quicksand.colors_min            = 6;
+        Quicksand.colors_max            = 6;
+        Quicksand.colors.resize(6);
+        modes.push_back(Quicksand);
+    }
 
     SetupZones();
 }
@@ -387,119 +420,137 @@ RGBController_AuraKeyboard::~RGBController_AuraKeyboard()
 
 void RGBController_AuraKeyboard::SetupZones()
 {
-    /*---------------------------------------------------------*\
-    | Set up zones                                              |
-    \*---------------------------------------------------------*/
-    std::vector<led_zone> led_zones;
-    std::vector<aura_keyboard_led> led_names;
+    std::map<int,layout_info> * keyboard_ptr;
 
-    switch(layout)
+    switch(pid)
     {
-        /*-----------------------------------------------------*\
-        | On the ROG Scope keyboards Ctrl key is double sized,  |
-        | so there is a layout shift                            |
-        \*-----------------------------------------------------*/
-        case SCOPE_LAYOUT:
-            led_names = default_led_names;
-            led_zones.push_back({ZONE_EN_KEYBOARD,      ZONE_TYPE_MATRIX, 106, new matrix_map_type(6, 22, (unsigned int *)&scope_matrix_map)});
-
-            led_names.insert(led_names.begin() + 7,     {KEY_EN_LEFT_WINDOWS,   0x15});
-            led_names.insert(led_names.begin() + 12,    {KEY_EN_LEFT_ALT,       0x1D});
+        case AURA_ROG_STRIX_FLARE_PID:
+        case AURA_ROG_STRIX_FLARE_PNK_LTD_PID:
+        case AURA_ROG_STRIX_FLARE_COD_BO4_PID:
+            keyboard_ptr = &AsusROGStrixFlareLayouts;
             break;
-
-        case SCOPE_RX_LAYOUT:
-            led_names = default_led_names;
-            led_zones.push_back({ZONE_EN_KEYBOARD,      ZONE_TYPE_MATRIX, 106, new matrix_map_type(6, 22, (unsigned int *)&scope_matrix_map)});
-            led_zones.push_back({"Logo",                ZONE_TYPE_SINGLE, 1, NULL});
-
-            led_names.insert(led_names.begin() + 7,     {KEY_EN_LEFT_WINDOWS,   0x15});
-            led_names.insert(led_names.begin() + 12,    {KEY_EN_LEFT_ALT,       0x1D});
-            led_names.push_back({ "Logo", 0xB0});
+        case AURA_TUF_K3_GAMING_PID:
+        case AURA_TUF_K7_GAMING_PID:
+            keyboard_ptr = &AsusTUFK7Layouts;
             break;
-
-        case SCOPE_TKL_LAYOUT:
-            led_names = default_tkl_led_names;
-            led_zones.push_back({ZONE_EN_KEYBOARD,      ZONE_TYPE_MATRIX, 86, new matrix_map_type(6, 18, (unsigned int *)&scope_tkl_matrix_map)});
-            led_zones.push_back({"Logo",                ZONE_TYPE_LINEAR, 2, NULL});
-            led_zones.push_back({"Underglow",           ZONE_TYPE_LINEAR, 26, NULL});
-
-            led_names.insert(led_names.begin() + 7,     {KEY_EN_LEFT_WINDOWS,   0x15});
-            led_names.insert(led_names.begin() + 12,    {KEY_EN_LEFT_ALT,       0x1D});
+        case AURA_ROG_STRIX_SCOPE_PID:
+        case AURA_ROG_STRIX_SCOPE_RX_PID:
+        case AURA_ROG_STRIX_SCOPE_RX_EVA_02_PID:
+        case AURA_ROG_STRIX_SCOPE_NX_WIRELESS_DELUXE_USB_PID:
+        case AURA_ROG_STRIX_SCOPE_NX_WIRELESS_DELUXE_2_4_PID:
+            keyboard_ptr = &AsusROGStrixScopeLayouts;
             break;
-
-        case FLARE_LAYOUT:
-            led_names = default_led_names;
-            led_zones.push_back({ZONE_EN_KEYBOARD,      ZONE_TYPE_MATRIX, 106, new matrix_map_type(6, 22, (unsigned int *)&flare_matrix_map)});
-            led_zones.push_back({"Logo",                ZONE_TYPE_SINGLE, 1, NULL});
-            led_zones.push_back({"Underglow",           ZONE_TYPE_SINGLE, 2, NULL});
-
-            led_names.insert(led_names.begin() + 7,     {KEY_EN_LEFT_WINDOWS,   0x0D});
-            led_names.insert(led_names.begin() + 12,    {KEY_EN_LEFT_ALT,       0x15});
-
-            led_names.push_back({ "Logo", 0xB8});
-            led_names.push_back({ "Left Underglow",     0xB9});
-            led_names.push_back({ "Right Underglow",    0xBA});
+        case AURA_ROG_STRIX_SCOPE_TKL_PID:
+        case AURA_ROG_STRIX_SCOPE_TKL_PNK_LTD_PID:
+        case AURA_ROG_STRIX_SCOPE_RX_TKL_DELUXE_PID:
+        case AURA_ROG_STRIX_SCOPE_NX_TKL_MOONLIGHT_WHITE_PID:
+            keyboard_ptr = &AsusROGStrixScopeTKLLayouts;
             break;
-
-        case FALCHION_LAYOUT:
-            led_names = default_65pct_led_names;
-            led_zones.push_back({ZONE_EN_KEYBOARD,      ZONE_TYPE_MATRIX, 68, new matrix_map_type(5, 16, (unsigned int *)&falchion_matrix_map)});
+        case AURA_ROG_STRIX_SCOPE_II_PID:
+        case AURA_ROG_STRIX_SCOPE_II_RX_PID:
+            keyboard_ptr = &AsusROGStrixScopeIILayouts;
             break;
+        case AURA_ROG_STRIX_SCOPE_II_96_WIRELESS_USB_PID:
+            keyboard_ptr = &AsusROGStrixScopeII96WirelessLayouts;
+            break;
+        case AURA_ROG_STRIX_SCOPE_II_96_RX_WIRELESS_USB_PID:
+            keyboard_ptr = &AsusROGStrixScopeII96RxWirelessLayouts;
+            break;
+        case AURA_ROG_STRIX_FLARE_II_PID:
+            keyboard_ptr = &AsusROGStrixFlareIILayouts;
+			break;
+        case AURA_ROG_STRIX_FLARE_II_ANIMATE_PID:
+            keyboard_ptr = &AsusROGStrixFlareIIAnimateLayouts;
+            break;
+        case AURA_ROG_AZOTH_USB_PID:
+        case AURA_ROG_AZOTH_2_4_PID:
+            keyboard_ptr = &AsusROGAzothLayouts;
+            break;
+        case AURA_ROG_FALCHION_WIRED_PID:
+        case AURA_ROG_FALCHION_WIRELESS_PID:
+            keyboard_ptr = &AsusFalchionLayouts;
+            break;
+        case AURA_ROG_CLAYMORE_PID:
+            unsigned char numpad;
+            numpad = controller->GetNumpadLocation();
+            switch(numpad)
+            {
+                case 0:
+                    keyboard_ptr = &AsusClaymoreNoNumpadLayouts;
+                    break;
+                case 2:
+                    keyboard_ptr = &AsusClaymoreNumpadRightLayouts;
+                    break;
+                case 3:
+                    keyboard_ptr = &AsusClaymoreNumpadLeftLayouts;
+                    break;
+                default:
+                    keyboard_ptr = &AsusClaymoreNoNumpadLayouts;
+            }
+            break;
+        case AURA_TUF_K1_GAMING_PID:
+        case AURA_TUF_K5_GAMING_PID:
+            keyboard_ptr = &AsusTufK1Layouts;
+            break;
+        case AURA_TUF_K3_GAMING_GEN_II_PID:
+        case AURA_TUF_K3_GENII_MIKU_EDITION_PID:
+            keyboard_ptr = &AsusTUFK3GamingGen2Layouts;
+            break;
+        default:
+            keyboard_ptr = &AsusTUFK7Layouts;
     }
 
-    unsigned int total_led_count = 0;
-    for(unsigned int zone_idx = 0; zone_idx < led_zones.size(); zone_idx++)
+    std::map<int,layout_info> & keyboard = *keyboard_ptr;
+
+    unsigned char layout = controller->GetLayout();
+
+    if(keyboard.find(layout % 100) == keyboard.end())
     {
-        zone new_zone;
-        new_zone.name                   = led_zones[zone_idx].name;
-        new_zone.type                   = led_zones[zone_idx].type;
-        new_zone.leds_min               = led_zones[zone_idx].size;
-        new_zone.leds_max               = led_zones[zone_idx].size;
-        new_zone.leds_count             = led_zones[zone_idx].size;
-
-        if(led_zones[zone_idx].type == ZONE_TYPE_MATRIX && led_zones[zone_idx].matrix != NULL)
-        {
-            new_zone.matrix_map         = *led_zones[zone_idx].matrix;
-        }
-
-        zones.push_back(new_zone);
-
-        total_led_count += led_zones[zone_idx].size;
+        /*---------------------------------------------------------*\
+        | If Layout not found, take uk or us                        |
+        \*---------------------------------------------------------*/
+        layout = std::floor(layout/100) == 2 ? ASUS_TUF_K7_LAYOUT_UK : ASUS_TUF_K7_LAYOUT_US;
+    }
+    else
+    {
+        layout = layout % 100;
     }
 
-    for(unsigned int led_idx = 0; led_idx < total_led_count; led_idx++)
+    zone keyboard_zone;
+    keyboard_zone.name               = "Keyboard";
+    keyboard_zone.type               = ZONE_TYPE_MATRIX;
+    keyboard_zone.leds_min           = keyboard[layout].size;
+    keyboard_zone.leds_max           = keyboard[layout].size;
+    keyboard_zone.leds_count         = keyboard[layout].size;
+    keyboard_zone.matrix_map.Set(keyboard[layout].rows, keyboard[layout].cols, keyboard[layout].matrix_map);
+    zones.push_back(keyboard_zone);
+
+    for(int led_id = 0; led_id < keyboard[layout].size; led_id++)
     {
         led new_led;
-        new_led.name  = led_names[led_idx].name;
-        new_led.value = led_names[led_idx].idx;
-
+        new_led.name  = keyboard[layout].led_names[led_id].name;
+        new_led.value = keyboard[layout].led_names[led_id].id;
         leds.push_back(new_led);
     }
 
     SetupColors();
+
+    /*---------------------------------------------------------*\
+    | sends the init packet for the default mode (direct)       |
+    \*---------------------------------------------------------*/
+    DeviceUpdateMode();
 }
 
 void RGBController_AuraKeyboard::DeviceUpdateLEDs()
 {
-    std::vector<unsigned char> frame_buf;
+    std::vector<led_color> led_color_list = {};
 
-    /*---------------------------------------------------------*\
-    | Resize the frame buffer, 4 bytes per LED                  |
-    \*---------------------------------------------------------*/
-    frame_buf.resize(leds.size() * 4);
-
-    /*---------------------------------------------------------*\
-    | TODO: Send packets with multiple LED frames               |
-    \*---------------------------------------------------------*/
-    for(std::size_t led_idx = 0; led_idx < leds.size(); led_idx++)
+    for(size_t i = 0; i < colors.size(); i++)
     {
-        frame_buf[(led_idx * 4) + 0] = leds[led_idx].value;
-        frame_buf[(led_idx * 4) + 1] = RGBGetRValue(colors[led_idx]);
-        frame_buf[(led_idx * 4) + 2] = RGBGetGValue(colors[led_idx]);
-        frame_buf[(led_idx * 4) + 3] = RGBGetBValue(colors[led_idx]);
+        led_color_list.push_back({ leds[i].value, colors[i] });
     }
 
-    controller->SendDirect((unsigned char)leds.size(), frame_buf.data());
+    controller->UpdateLeds(led_color_list);
 }
 
 void RGBController_AuraKeyboard::DeviceUpdateZoneLEDs(int /*zone*/)
@@ -507,12 +558,118 @@ void RGBController_AuraKeyboard::DeviceUpdateZoneLEDs(int /*zone*/)
     DeviceUpdateLEDs();
 }
 
-void RGBController_AuraKeyboard::DeviceUpdateSingleLED(int /*led*/)
+void RGBController_AuraKeyboard::DeviceUpdateSingleLED(int led)
 {
-    DeviceUpdateLEDs();
+    if(!controller->is_per_led_keyboard)
+    {
+        return DeviceUpdateLEDs();
+    }
+
+    unsigned char red   = RGBGetRValue(colors[led]);
+    unsigned char green = RGBGetGValue(colors[led]);
+    unsigned char blue  = RGBGetBValue(colors[led]);
+
+    controller->UpdateSingleLed(leds[led].value, red, green, blue);
 }
+
+static const uint8_t direction_map[2][6] =
+{
+    { 4,  0,  6,  2,  8,  1 },          // Default directions Left, Right, Up, Down, Horizontal, Vertical
+    { 0,  4,  6,  2,  0xFF,  0xFF },    // AURA_ROG_CLAYMORE directions Left, Right, Up, Down
+};
 
 void RGBController_AuraKeyboard::DeviceUpdateMode()
 {
+    if(pid == AURA_ROG_CLAYMORE_PID)
+    {
+        controller->AllowRemoteControl(1);
+    }
 
+    unsigned char color_mode    = 0;
+    unsigned char direction     = 0;
+    unsigned char brightness    = 0;
+
+    if(modes[active_mode].value == AURA_KEYBOARD_MODE_DIRECT)
+    {
+        if(pid == AURA_ROG_CLAYMORE_PID) controller->AllowRemoteControl(3);
+        return;
+    };
+
+    if(pid != AURA_ROG_CLAYMORE_PID)
+    {
+        brightness = modes[active_mode].brightness * 25;
+
+        switch(modes[active_mode].value)
+        {
+            case AURA_KEYBOARD_MODE_BREATHING:
+            case AURA_KEYBOARD_MODE_REACTIVE:
+            case AURA_KEYBOARD_MODE_STARRY_NIGHT:
+            case AURA_KEYBOARD_MODE_CURRENT:
+            case AURA_KEYBOARD_MODE_RAIN_DROP:
+                if(!controller->is_per_led_keyboard && modes[active_mode].colors.size() > 1)
+                {
+                    color_mode = 1;
+                    break;
+                }
+
+                bool color_is_black = (modes[active_mode].colors.size() > 1 && modes[active_mode].colors[1] == 000);
+
+                if(modes[active_mode].color_mode == MODE_COLORS_MODE_SPECIFIC && !color_is_black)
+                {
+                    color_mode = 16;
+                }
+                break;
+        }
+
+        if(modes[active_mode].color_mode == MODE_COLORS_RANDOM)
+        {
+            color_mode = 1;
+        }
+
+        if(modes[active_mode].value == AURA_KEYBOARD_MODE_WAVE || modes[active_mode].value == AURA_KEYBOARD_MODE_QUICKSAND)
+        {
+            /*----------------------------------------------------------*\
+            | converting openrgb direction value to keyboard directions  |
+            \*----------------------------------------------------------*/
+            direction  = direction_map[0][modes[active_mode].direction];
+        }
+    }
+    else
+    {
+        if(modes[active_mode].color_mode == MODE_COLORS_RANDOM)
+        {
+            color_mode = 1;
+        }
+
+        if(modes[active_mode].value == AURA_KEYBOARD_MODE_WAVE) {
+            if (modes[active_mode].color_mode == MODE_COLORS_MODE_SPECIFIC) color_mode = 2;
+
+            /*----------------------------------------------------------*\
+            | converting openrgb direction value to keyboard directions  |
+            \*----------------------------------------------------------*/
+            direction = direction_map[1][modes[active_mode].direction];
+        }
+    }
+
+
+    controller->UpdateDevice(modes[active_mode].value, std::vector<RGBColor>(modes[active_mode].colors), direction, color_mode, modes[active_mode].speed, brightness);
+
+    if(pid == AURA_ROG_CLAYMORE_PID)
+    {
+        controller->UpdateMode(modes[active_mode].value);
+        controller->SaveMode();
+        controller->AllowRemoteControl(0);
+    }
+}
+
+void RGBController_AuraKeyboard::DeviceSaveMode()
+{
+    /*----------------------------------------------------------*\
+    | not available for Claymore                                 |
+    \*----------------------------------------------------------*/
+    if(pid != AURA_ROG_CLAYMORE_PID)
+    {
+        DeviceUpdateMode();
+        controller->SaveMode();
+    }
 }

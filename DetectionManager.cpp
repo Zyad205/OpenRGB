@@ -88,6 +88,8 @@ const hidapi_wrapper default_hidapi_wrapper =
     NULL,
     (hidapi_wrapper_send_feature_report)            hid_send_feature_report,
     (hidapi_wrapper_get_feature_report)             hid_get_feature_report,
+    (hidapi_wrapper_write)                          hid_write,
+    (hidapi_wrapper_get_input_report)               hid_get_input_report,
     (hidapi_wrapper_get_serial_number_string)       hid_get_serial_number_string,
     (hidapi_wrapper_open_path)                      hid_open_path,
     (hidapi_wrapper_enumerate)                      hid_enumerate,
@@ -357,6 +359,19 @@ void DetectionManager::RegisterI2CPCIDeviceDetector(std::string name, I2CPCIDevi
     block.enabled_by_default    = enabled_by_default;
 
     i2c_pci_device_detectors.push_back(block);
+}
+
+void DetectionManager::RegisterUSBSerialDeviceDetector(std::string name, USBSerialDeviceDetectorFunction detector, int vid, int pid, bool enabled_by_default)
+{
+    USBSerialDeviceDetectorBlock block;
+
+    block.name                  = name;
+    block.function              = detector;
+    block.vid                   = vid;
+    block.pid                   = pid;
+    block.enabled_by_default    = enabled_by_default;
+
+    usb_serial_detectors.push_back(block);
 }
 
 /*---------------------------------------------------------*\
@@ -741,7 +756,7 @@ void DetectionManager::BackgroundDetectDevices()
     \*-----------------------------------------------------*/
     if(initial_detection)
     {
-        if(initial_detection_delay_ms != 0)
+        if(initial_detection_delay_ms > 0)
         {
             detection_string = "Waiting for detection delay";
             SignalUpdate(DETECTIONMANAGER_UPDATE_REASON_DETECTION_PROGRESS_CHANGED);
@@ -796,13 +811,15 @@ void DetectionManager::BackgroundDetectDevices()
         }
     }
 
+    detection_percent_usb_serial_count  = (unsigned int)usb_serial_detectors.size();
     detection_percent_other_count       = (unsigned int)device_detectors.size();
 
     detection_percent_denominator       = detection_percent_i2c_count
                                         + detection_percent_i2c_dram_count
                                         + detection_percent_i2c_pci_count
                                         + detection_percent_other_count
-                                        + detection_percent_hid_count;
+                                        + detection_percent_hid_count
+                                        + detection_percent_usb_serial_count;
 
     /*-----------------------------------------------------*\
     | Detect I2C interfaces                                 |
@@ -849,6 +866,11 @@ void DetectionManager::BackgroundDetectDevices()
     BackgroundDetectHIDDevicesWrapped(hid_devices, detector_settings);
 #endif
 #endif
+
+    /*-----------------------------------------------------*\
+    | Detect USB Serial devices                             |
+    \*-----------------------------------------------------*/
+    BackgroundDetectUSBSerialDevices(detector_settings);
 
     /*-----------------------------------------------------*\
     | Detect other devices                                  |
@@ -1323,6 +1345,51 @@ void DetectionManager::BackgroundDetectHIDDevicesWrapped(hid_device_info* hid_de
 #endif
 #endif
 
+void DetectionManager::BackgroundDetectUSBSerialDevices(json& detector_settings)
+{
+    LOG_INFO("------------------------------------------------------");
+    LOG_INFO("|           Detecting USB Serial devices             |");
+    LOG_INFO("------------------------------------------------------");
+
+    std::vector<SerialDeviceInfo> serial_devices = find_usb_serial_ports();
+
+    for(std::size_t detector_idx = 0; detector_idx < usb_serial_detectors.size(); detector_idx++)
+    {
+        detection_string = usb_serial_detectors[detector_idx].name.c_str();
+
+        /*-------------------------------------------------*\
+        | Check if this detector is enabled                 |
+        \*-------------------------------------------------*/
+        bool this_device_enabled = true;
+
+        if(detector_settings.contains("detectors") && detector_settings["detectors"].contains(detection_string))
+        {
+            this_device_enabled = detector_settings["detectors"][detection_string];
+        }
+
+        LOG_DEBUG("[%s] %s is %s", DETECTIONMANAGER, detection_string.c_str(), ((this_device_enabled == true) ? "enabled" : "disabled"));
+
+        if(this_device_enabled)
+        {
+            SignalUpdate(DETECTIONMANAGER_UPDATE_REASON_DETECTION_PROGRESS_CHANGED);
+
+            for(std::size_t serial_device_idx = 0; serial_device_idx < serial_devices.size(); serial_device_idx++)
+            {
+                if((usb_serial_detectors[detector_idx].vid == serial_devices[serial_device_idx].vendor_id)
+                && (usb_serial_detectors[detector_idx].pid == serial_devices[serial_device_idx].product_id))
+                {
+                    DetectedControllers detected_controllers = usb_serial_detectors[detector_idx].function(&serial_devices[serial_device_idx], detection_string);
+
+                    for(std::size_t detected_controller_idx = 0; detected_controller_idx < detected_controllers.size(); detected_controller_idx++)
+                    {
+                        RegisterRGBController(detected_controllers[detected_controller_idx]);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void DetectionManager::BackgroundDetectOtherDevices(json& detector_settings)
 {
     LOG_INFO("------------------------------------------------------");
@@ -1366,6 +1433,7 @@ void DetectionManager::BackgroundDetectOtherDevices(json& detector_settings)
                                                  + detection_percent_i2c_dram_count
                                                  + detection_percent_i2c_pci_count
                                                  + detection_percent_hid_count
+                                                 + detection_percent_usb_serial_count
                                                  + (unsigned int)detector_idx;
 
         detection_percent = (unsigned int)(100.0f * (detection_percent_numerator / detection_percent_denominator));
@@ -1423,6 +1491,8 @@ void DetectionManager::BackgroundHIDInit()
             .dyn_handle                         = hidapi_libusb_handle,
             .hid_send_feature_report            = (hidapi_wrapper_send_feature_report)          dlsym(hidapi_libusb_handle,"hid_send_feature_report"),
             .hid_get_feature_report             = (hidapi_wrapper_get_feature_report)           dlsym(hidapi_libusb_handle,"hid_get_feature_report"),
+            .hid_write                          = (hidapi_wrapper_write)                        dlsym(hidapi_libusb_handle,"hid_write"),
+            .hid_get_input_report               = (hidapi_wrapper_get_input_report)             dlsym(hidapi_libusb_handle,"hid_get_input_report"),
             .hid_get_serial_number_string       = (hidapi_wrapper_get_serial_number_string)     dlsym(hidapi_libusb_handle,"hid_get_serial_number_string"),
             .hid_open_path                      = (hidapi_wrapper_open_path)                    dlsym(hidapi_libusb_handle,"hid_open_path"),
             .hid_enumerate                      = (hidapi_wrapper_enumerate)                    dlsym(hidapi_libusb_handle,"hid_enumerate"),
@@ -1913,6 +1983,21 @@ void DetectionManager::UpdateDetectorSettings()
     }
 
     /*-----------------------------------------------------*\
+    | Loop through all the USB Serial detectors and see if  |
+    | any need to be saved to the settings                  |
+    \*-----------------------------------------------------*/
+    for(std::size_t usb_serial_detector_idx = 0; usb_serial_detector_idx < usb_serial_detectors.size(); usb_serial_detector_idx++)
+    {
+        detection_string = usb_serial_detectors[usb_serial_detector_idx].name.c_str();
+
+        if(!(detector_settings.contains("detectors") && detector_settings["detectors"].contains(detection_string)))
+        {
+            detector_settings["detectors"][detection_string] = usb_serial_detectors[usb_serial_detector_idx].enabled_by_default;
+            save_settings = true;
+        }
+    }
+
+    /*-----------------------------------------------------*\
     | Loop through remaining detectors and see if any need  |
     | to be saved to the settings                           |
     \*-----------------------------------------------------*/
@@ -1972,6 +2057,11 @@ void DetectionManager::UpdateDetectorSettings()
         for(std::size_t hid_wrapped_detector_idx = 0; hid_wrapped_detector_idx < hid_wrapped_specific_detectors.size(); hid_wrapped_detector_idx++)
         {
             active_detector_names.insert(hid_wrapped_specific_detectors[hid_wrapped_detector_idx].name);
+        }
+
+        for(std::size_t usb_serial_detector_idx = 0; usb_serial_detector_idx < usb_serial_detectors.size(); usb_serial_detector_idx++)
+        {
+            active_detector_names.insert(usb_serial_detectors[usb_serial_detector_idx].name);
         }
 
         for(std::size_t detector_idx = 0; detector_idx < device_detector_strings.size(); detector_idx++)

@@ -80,6 +80,12 @@ bool net_port::udp_client(const char * client_name, const char * send_port, cons
         return(false);
     }
 
+    if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char *)&yes, sizeof(yes)) == SOCKET_ERROR)
+    {
+        WSACleanup();
+        return(false);
+    }
+
     myAddress.sin_family = AF_INET;
     myAddress.sin_addr.s_addr = inet_addr("0.0.0.0");
     myAddress.sin_port = htons(atoi(recv_port));
@@ -139,6 +145,27 @@ void net_port::set_receive_timeout(int sec, int usec)
 int net_port::udp_write(char * buffer, int length)
 {
     return(sendto(sock, buffer, length, 0, (sockaddr *)&addrDest, sizeof(addrDest)));
+}
+
+int net_port::udp_write_to(const char * address, const char * port, char * buffer, int length)
+{
+    addrinfo    hints       = {};
+    addrinfo *  destination = NULL;
+    int         ret;
+
+    hints.ai_family     = AF_INET;
+    hints.ai_socktype   = SOCK_DGRAM;
+
+    if(getaddrinfo(address, port, &hints, &destination) != 0)
+    {
+        return(-1);
+    }
+
+    ret = sendto(sock, buffer, length, 0, destination->ai_addr, (int)destination->ai_addrlen);
+
+    freeaddrinfo(destination);
+
+    return(ret);
 }
 
 bool net_port::tcp_client(const char * client_name, const char * port)

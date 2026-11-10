@@ -2040,9 +2040,23 @@ void OpenRGBDevicePage::UpdateInterface(unsigned int update_reason)
     case RGBCONTROLLER_UPDATE_REASON_ADDSEGMENT:
     case RGBCONTROLLER_UPDATE_REASON_CLEARSEGMENTS:
     case RGBCONTROLLER_UPDATE_REASON_CONFIGUREZONE:
-    case RGBCONTROLLER_UPDATE_REASON_SETDEVICESPECIFICCONFIGURATION:
     case RGBCONTROLLER_UPDATE_REASON_SETDEVICESPECIFICZONECONFIGURATION:
         UpdateModeUi();
+        ui->DeviceViewBox->SetChanged();
+        ui->DeviceViewBox->repaint();
+        break;
+
+    case RGBCONTROLLER_UPDATE_REASON_SETDEVICESPECIFICCONFIGURATION:
+        /*-------------------------------------------------*\
+        | Device-specific configuration may change the      |
+        | number and identity of zones. Rebuild all lists   |
+        | that depend on the controller's zone topology.    |
+        \*-------------------------------------------------*/
+        UpdateZoneList();
+        UpdateModeList();
+        UpdateModeUi();
+        UpdateLEDList();
+        UpdateLEDUi();
         ui->DeviceViewBox->SetChanged();
         ui->DeviceViewBox->repaint();
         break;
@@ -2567,6 +2581,13 @@ void OpenRGBDevicePage::on_SettingsUpdated()
         bool            disable_expansion   = ui_settings["disable_key_expansion"];
 
         ui->DeviceViewBox->SetDisableKeyExpansion(disable_expansion);
+    }
+
+    if(ui_settings.contains("hide_empty_zones"))
+    {
+        bool            hide_empty_zones    = ui_settings["hide_empty_zones"];
+
+        ui->DeviceViewBox->SetHideEmptyZones(hide_empty_zones);
     }
 
     if(ui_settings.contains("hex_format"))

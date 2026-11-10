@@ -178,6 +178,8 @@ public:
     \*-----------------------------------------------------*/
     void                    Shutdown();
 
+    void                    WaitForDeviceUpdate();
+
     void                    UpdateLEDs();
     void                    UpdateZoneLEDs(int zone);
     void                    UpdateSingleLED(int led);
@@ -195,23 +197,6 @@ public:
     void                    ResizeZone(int zone, int new_size);
 
     void                    ConfigureDevice(controller_flags new_flags, std::string new_name);
-
-    /*-----------------------------------------------------*\
-    | Functions to be implemented in device implementation  |
-    \*-----------------------------------------------------*/
-    virtual void            DeviceConfigureDevice();
-    virtual void            DeviceConfigureZone(int zone_idx);
-
-    virtual void            DeviceUpdateLEDs();
-    virtual void            DeviceUpdateZoneLEDs(int zone);
-    virtual void            DeviceUpdateSingleLED(int led);
-
-    virtual void            DeviceUpdateMode();
-    virtual void            DeviceUpdateZoneMode(int zone);
-    virtual void            DeviceSaveMode();
-
-    virtual void            DeviceUpdateDeviceSpecificConfiguration();
-    virtual void            DeviceUpdateDeviceSpecificZoneConfiguration(int zone);
 
     /*-----------------------------------------------------*\
     | Static Serialized Description Functions               |
@@ -294,8 +279,19 @@ protected:
 
     /*-----------------------------------------------------*\
     | Access mutex variables                                |
+    | This mutex protects the RGBController state variables |
+    | (modes, colors, zones) from being written to while    |
+    | readers are accessing the data.                       |
     \*-----------------------------------------------------*/
     std::shared_mutex       AccessMutex;
+
+    /*-----------------------------------------------------*\
+    | Device mutex variables                                |
+    | This mutex protects internal RGBController device     |
+    | functionality from being called from more than one    |
+    | place simultaneously.                                 |
+    \*-----------------------------------------------------*/
+    std::mutex              DeviceMutex;
 
     /*-----------------------------------------------------*\
     | Functions not part of interface for internal use only |
@@ -303,6 +299,23 @@ protected:
     unsigned int            LEDsInZone(unsigned int zone);
     void                    SetupColors();
     void                    UpdateLEDsInternal();
+
+    /*-----------------------------------------------------*\
+    | Functions to be implemented in device implementation  |
+    \*-----------------------------------------------------*/
+    virtual void            DeviceConfigureDevice();
+    virtual void            DeviceConfigureZone(int zone_idx);
+
+    virtual void            DeviceUpdateLEDs();
+    virtual void            DeviceUpdateZoneLEDs(int zone);
+    virtual void            DeviceUpdateSingleLED(int led);
+
+    virtual void            DeviceUpdateMode();
+    virtual void            DeviceUpdateZoneMode(int zone);
+    virtual void            DeviceSaveMode();
+
+    virtual void            DeviceUpdateDeviceSpecificConfiguration();
+    virtual void            DeviceUpdateDeviceSpecificZoneConfiguration(int zone);
 
 private:
     /*-----------------------------------------------------*\
@@ -312,6 +325,15 @@ private:
     std::atomic<bool>       CallFlag_UpdateLEDs;
     std::atomic<bool>       CallFlag_UpdateMode;
     std::atomic<bool>       DeviceThreadRunning;
+
+    /*-----------------------------------------------------*\
+    | Device update wait variables                          |
+    | WaitForDeviceUpdate() blocks until the device thread  |
+    | has written every queued update to the device         |
+    \*-----------------------------------------------------*/
+    std::mutex              DeviceCallMutex;
+    std::condition_variable DeviceCallDone;
+    bool                    DeviceCallActive;
 
     /*-----------------------------------------------------*\
     | Update callback variables                             |

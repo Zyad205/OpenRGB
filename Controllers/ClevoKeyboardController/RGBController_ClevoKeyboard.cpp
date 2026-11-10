@@ -14,6 +14,7 @@
 #include <vector>
 #include "RGBController_ClevoKeyboard.h"
 #include "KeyboardLayoutManager.h"
+#include "dmiinfo.h"
 
 /**------------------------------------------------------------------*\
     @name CLEVO Keyboard
@@ -352,6 +353,16 @@ RGBController_ClevoKeyboard::RGBController_ClevoKeyboard(ClevoKeyboardController
     modes.push_back(Off);
 
     SetupZones();
+
+    /*---------------------------------------------------------*\
+    | ITE 8291 boards share one PID but not one LED map, so     |
+    | let the user pick the map in the Edit Device dialog       |
+    \*---------------------------------------------------------*/
+    if(controller->GetType() == CLEVO_KB_ITE8291)
+    {
+        InitDeviceSpecificConfiguration();
+        ApplyLEDMap();
+    }
 }
 
 RGBController_ClevoKeyboard::~RGBController_ClevoKeyboard()
@@ -368,9 +379,19 @@ void RGBController_ClevoKeyboard::SetupZones()
     \*---------------------------------------------------------*/
     bool is_829x = (controller->GetType() == CLEVO_KB_ITE829X);
 
-    keyboard_keymap_overlay_values& layout = is_829x
-        ? clevo_829x_keyboard_layout
-        : clevo_keyboard_layout;
+    /* Only the measured TUXEDO Stellaris 16 Gen7 AMD layout uses this map.
+       Keep all other ITE/Clevo models on their original layout. */
+    bool is_stellaris16a07 = false;
+    if(!is_829x)
+    {
+        DMIInfo dmi;
+        is_stellaris16a07 = (dmi.getProductSKU() == "STELLARIS16A07");
+    }
+
+
+    keyboard_keymap_overlay_values& layout = is_stellaris16a07
+        ? clevo_stellaris16a07_keyboard_layout
+        : (is_829x ? clevo_829x_keyboard_layout : clevo_keyboard_layout);
 
     KeyboardLayoutManager new_kb(KEYBOARD_LAYOUT_ISO_QWERTY,
                                  layout.base_size,
@@ -404,21 +425,29 @@ void RGBController_ClevoKeyboard::SetupZones()
         new_led.value   = new_kb.GetKeyValueAt(led_idx);
 
         leds.push_back(new_led);
+        default_led_values.push_back(new_led.value);
     }
 
     SetupColors();
 
+    BuildBufferMap();
+}
+
+void RGBController_ClevoKeyboard::BuildBufferMap()
+{
     /*---------------------------------------------------------*\
     | Build buffer map from LED values to color pointers        |
     | 829x LED IDs have gaps (stride 32), need larger map       |
     \*---------------------------------------------------------*/
+    bool is_829x = (controller->GetType() == CLEVO_KB_ITE829X);
+
     null_color = 0x00000000;
 
     size_t map_size = is_829x
         ? CLEVO_829X_LED_ID(CLEVO_829X_NUM_ROWS - 1, CLEVO_829X_NUM_COLS - 1) + 1
         : (size_t)controller->GetNumLEDs();
 
-    buffer_map.resize(map_size, &null_color);
+    buffer_map.assign(map_size, &null_color);
 
     for(size_t led_idx = 0; led_idx < leds.size(); led_idx++)
     {
@@ -521,5 +550,84 @@ void RGBController_ClevoKeyboard::DeviceSaveMode()
     {
         DeviceUpdateMode();
         controller->SaveToBios829x();
+    }
+}
+
+void RGBController_ClevoKeyboard::InitDeviceSpecificConfiguration()
+{
+    nlohmann::json configuration_json;
+
+    configuration_json["schema"]["led_map"]["title"]        = "LED Map";
+    configuration_json["schema"]["led_map"]["description"]  = "Keyboards with this controller come with different PCB revisions that wire Enter, Left Shift and the ISO backslash key to different LEDs. Pick the one that lights the right keys.";
+    configuration_json["schema"]["led_map"]["type"]         = "string";
+    configuration_json["schema"]["led_map"]["default"]      = CLEVO_ITE8291_LED_MAP_DEFAULT;
+    configuration_json["schema"]["led_map"]["enum"][0]      = CLEVO_ITE8291_LED_MAP_DEFAULT;
+    configuration_json["schema"]["led_map"]["enum"][1]      = CLEVO_ITE8291_LED_MAP_ALTERNATE;
+
+    configuration_json["configuration"]["led_map"]          = CLEVO_ITE8291_LED_MAP_DEFAULT;
+
+    flags                  |= CONTROLLER_FLAG_MANUALLY_CONFIGURABLE_DEVICE_SPECIFIC;
+    configuration           = configuration_json.dump();
+}
+
+void RGBController_ClevoKeyboard::ApplyLEDMap()
+{
+    /*---------------------------------------------------------*\
+    | Callers already hold AccessMutex, so read the protected   |
+    | configuration string directly                             |
+    \*---------------------------------------------------------*/
+    bool alternate = false;
+
+    try
+    {
+        nlohmann::json configuration_json = nlohmann::json::parse(configuration);
+
+        alternate = configuration_json["configuration"].value("led_map", std::string(CLEVO_ITE8291_LED_MAP_DEFAULT)) == CLEVO_ITE8291_LED_MAP_ALTERNATE;
+    }
+    catch(...)
+    {
+    }
+
+    for(std::size_t led_idx = 0; led_idx < leds.size(); led_idx++)
+    {
+        leds[led_idx].value = default_led_values[led_idx];
+
+        if(alternate)
+        {
+            for(const clevo_led_override& entry : clevo_ite8291_alternate_led_map)
+            {
+                if(leds[led_idx].name == entry.name)
+                {
+                    leds[led_idx].value = entry.value;
+                }
+            }
+        }
+    }
+
+    BuildBufferMap();
+}
+
+void RGBController_ClevoKeyboard::DeviceConfigureDevice()
+{
+    if(controller->GetType() != CLEVO_KB_ITE8291)
+    {
+        return;
+    }
+
+    /*---------------------------------------------------------*\
+    | Go back to the default map unless the user picked one     |
+    \*---------------------------------------------------------*/
+    if((flags & CONTROLLER_FLAG_MANUALLY_CONFIGURED_DEVICE_SPECIFIC) == 0)
+    {
+        InitDeviceSpecificConfiguration();
+        ApplyLEDMap();
+    }
+}
+
+void RGBController_ClevoKeyboard::DeviceUpdateDeviceSpecificConfiguration()
+{
+    if(controller->GetType() == CLEVO_KB_ITE8291)
+    {
+        ApplyLEDMap();
     }
 }
